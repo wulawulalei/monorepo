@@ -1,0 +1,32 @@
+{
+  "name": "xzy-materials",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "dumi dev",
+    "docs:dev": "dumi dev",
+    "docs:build": "dumi build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "release": "changeset publish",
+    "version-packages": "changeset version",
+    "changeset": "changeset"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.8",
+    "@types/node": "^20.11.30",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "antd": "^5.20.0",
+    "dumi": "^2.4.14",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "turbo": "^2.1.3",
+    "typescript": "^5.6.3"
+  },
+  "packageManager": "pnpm@9.12.0"
+}
