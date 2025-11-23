@@ -18,7 +18,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup -c ../../tsup.config.ts",
+    "build": "tsup --config ../../tsup.config.ts",
     "prepack": "pnpm build"
   },
   "peerDependencies": {
