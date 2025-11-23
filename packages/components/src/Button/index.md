@@ -14,7 +14,7 @@ order: 1
 
 ```tsx
 import React from "react";
-import { AntdProvider, Button } from "@dfzx/components";
+import { AntdProvider, Button } from "@xzy/components";
 
 export default () => (
   <AntdProvider>

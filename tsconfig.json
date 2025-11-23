@@ -14,9 +14,9 @@
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "@dfzx/components": ["packages/components/src"],
-      "@dfzx/hooks": ["packages/hooks/src"],
-      "@dfzx/utils": ["packages/utils/src"]
+      "@xzy/components": ["packages/components/src"],
+      "@xzy/hooks": ["packages/hooks/src"],
+      "@xzy/utils": ["packages/utils/src"]
     },
     "types": ["node", "react", "react-dom"],
     "noEmit": true

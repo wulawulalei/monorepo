@@ -31,8 +31,8 @@ export default defineConfig({
     },
   ],
   alias: {
-    "@dfzx/components": resolve(__dirname, "packages/components/src"),
-    "@dfzx/hooks": resolve(__dirname, "packages/hooks/src"),
-    "@dfzx/utils": resolve(__dirname, "packages/utils/src"),
+    "@xzy/components": resolve(__dirname, "packages/components/src"),
+    "@xzy/hooks": resolve(__dirname, "packages/hooks/src"),
+    "@xzy/utils": resolve(__dirname, "packages/utils/src"),
   },
 });

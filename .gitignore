@@ -11,5 +11,7 @@ esm
 .umi
 .changeset/cache
 docs-dist
+.dumi/tmp
+.dumi/tmp-production
 
 

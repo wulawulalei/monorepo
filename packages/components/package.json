@@ -1,8 +1,8 @@
 {
-  "name": "@dfzx/components",
+  "name": "@xzy/components",
   "version": "0.0.0",
   "private": false,
-  "description": "DFZX React components built on Ant Design",
+  "description": "xzy React components built on Ant Design",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

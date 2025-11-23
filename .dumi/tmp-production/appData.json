@@ -38,7 +38,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register",
       "type": "preset",
@@ -95,7 +95,7 @@
       "time": {
         "hooks": {
           "modifyRoutes": [
-            0
+            1
           ]
         },
         "register": 0
@@ -155,10 +155,10 @@
       "time": {
         "hooks": {
           "onCheckConfig": [
-            1
+            0
           ],
           "onCheck": [
-            1
+            0
           ]
         },
         "register": 1
@@ -1060,7 +1060,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "config",
       "type": "plugin",
@@ -1077,7 +1077,7 @@
             0
           ]
         },
-        "register": 0
+        "register": 1
       },
       "enableBy": "register",
       "type": "plugin",
@@ -1103,7 +1103,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 49
+        "register": 48
       },
       "enableBy": "register",
       "type": "plugin",
@@ -1133,7 +1133,7 @@
             0
           ]
         },
-        "register": 2
+        "register": 1
       },
       "enableBy": "config",
       "type": "plugin",
@@ -1163,7 +1163,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register",
       "type": "plugin",
@@ -1189,7 +1189,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 19
+        "register": 18
       },
       "type": "plugin",
       "path": "/Users/koolearn/Documents/dfzx/demo/monorepo/node_modules/.pnpm/@umijs+preset-umi@4.5.3_@types+node@20.19.25_@types+react@18.3.27_@types+webpack@5.28.5_@utoo_xu5ye7kzkj4ku2jwk6ha2s3zzi/node_modules/@umijs/preset-umi/dist/features/mock/mock.js",
@@ -1253,10 +1253,10 @@
       "time": {
         "hooks": {
           "modifyConfig": [
-            0
+            1
           ]
         },
-        "register": 1
+        "register": 0
       },
       "type": "plugin",
       "path": "/Users/koolearn/Documents/dfzx/demo/monorepo/node_modules/.pnpm/@umijs+preset-umi@4.5.3_@types+node@20.19.25_@types+react@18.3.27_@types+webpack@5.28.5_@utoo_xu5ye7kzkj4ku2jwk6ha2s3zzi/node_modules/@umijs/preset-umi/dist/features/polyfill/polyfill.js",
@@ -1307,7 +1307,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "config",
       "type": "plugin",
@@ -1333,7 +1333,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 2
+        "register": 3
       },
       "enableBy": "register",
       "type": "plugin",
@@ -1346,7 +1346,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "config",
       "type": "plugin",
@@ -1359,7 +1359,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "type": "plugin",
       "path": "/Users/koolearn/Documents/dfzx/demo/monorepo/node_modules/.pnpm/@umijs+preset-umi@4.5.3_@types+node@20.19.25_@types+react@18.3.27_@types+webpack@5.28.5_@utoo_xu5ye7kzkj4ku2jwk6ha2s3zzi/node_modules/@umijs/preset-umi/dist/features/routeProps/routeProps.js",
@@ -1384,7 +1384,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 2
+        "register": 1
       },
       "enableBy": "register",
       "type": "plugin",
@@ -1423,7 +1423,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config",
       "type": "plugin",
@@ -1436,7 +1436,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 3
+        "register": 2
       },
       "type": "plugin",
       "path": "/Users/koolearn/Documents/dfzx/demo/monorepo/node_modules/.pnpm/@umijs+preset-umi@4.5.3_@types+node@20.19.25_@types+react@18.3.27_@types+webpack@5.28.5_@utoo_xu5ye7kzkj4ku2jwk6ha2s3zzi/node_modules/@umijs/preset-umi/dist/features/apiRoute/apiRoute.js",
@@ -1448,7 +1448,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 12
+        "register": 11
       },
       "enableBy": "config",
       "type": "plugin",
@@ -1461,7 +1461,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "type": "plugin",
       "path": "/Users/koolearn/Documents/dfzx/demo/monorepo/node_modules/.pnpm/@umijs+preset-umi@4.5.3_@types+node@20.19.25_@types+react@18.3.27_@types+webpack@5.28.5_@utoo_xu5ye7kzkj4ku2jwk6ha2s3zzi/node_modules/@umijs/preset-umi/dist/features/test/test.js",
@@ -1473,7 +1473,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "type": "plugin",
       "path": "/Users/koolearn/Documents/dfzx/demo/monorepo/node_modules/.pnpm/@umijs+preset-umi@4.5.3_@types+node@20.19.25_@types+react@18.3.27_@types+webpack@5.28.5_@utoo_xu5ye7kzkj4ku2jwk6ha2s3zzi/node_modules/@umijs/preset-umi/dist/features/clickToComponent/clickToComponent.js",
@@ -1485,7 +1485,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config",
       "type": "plugin",
@@ -1498,7 +1498,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "config",
       "type": "plugin",
@@ -1511,7 +1511,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "type": "plugin",
       "path": "/Users/koolearn/Documents/dfzx/demo/monorepo/node_modules/.pnpm/@umijs+preset-umi@4.5.3_@types+node@20.19.25_@types+react@18.3.27_@types+webpack@5.28.5_@utoo_xu5ye7kzkj4ku2jwk6ha2s3zzi/node_modules/@umijs/preset-umi/dist/features/webpack/webpack.js",
@@ -1552,7 +1552,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "config",
       "type": "plugin",
@@ -1565,7 +1565,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "type": "plugin",
       "path": "/Users/koolearn/Documents/dfzx/demo/monorepo/node_modules/.pnpm/@umijs+preset-umi@4.5.3_@types+node@20.19.25_@types+react@18.3.27_@types+webpack@5.28.5_@utoo_xu5ye7kzkj4ku2jwk6ha2s3zzi/node_modules/@umijs/preset-umi/dist/features/utoopack/utoopack.js",
@@ -1577,7 +1577,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 2
+        "register": 1
       },
       "type": "plugin",
       "path": "/Users/koolearn/Documents/dfzx/demo/monorepo/node_modules/.pnpm/@umijs+preset-umi@4.5.3_@types+node@20.19.25_@types+react@18.3.27_@types+webpack@5.28.5_@utoo_xu5ye7kzkj4ku2jwk6ha2s3zzi/node_modules/@umijs/preset-umi/dist/features/hmrGuardian/hmrGuardian.js",
@@ -1589,7 +1589,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 15
+        "register": 14
       },
       "type": "plugin",
       "path": "/Users/koolearn/Documents/dfzx/demo/monorepo/node_modules/.pnpm/@umijs+preset-umi@4.5.3_@types+node@20.19.25_@types+react@18.3.27_@types+webpack@5.28.5_@utoo_xu5ye7kzkj4ku2jwk6ha2s3zzi/node_modules/@umijs/preset-umi/dist/features/routePreloadOnLoad/routePreloadOnLoad.js",
@@ -1601,7 +1601,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config",
       "type": "plugin",
@@ -1665,7 +1665,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register",
       "type": "plugin",
@@ -1678,7 +1678,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register",
       "type": "plugin",
@@ -1704,7 +1704,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register",
       "type": "plugin",
@@ -1717,7 +1717,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register",
       "type": "plugin",
@@ -1756,7 +1756,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register",
       "type": "plugin",
@@ -1769,7 +1769,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register",
       "type": "plugin",
@@ -1795,7 +1795,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register",
       "type": "plugin",
@@ -1808,7 +1808,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register",
       "type": "plugin",
@@ -1834,7 +1834,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register",
       "type": "plugin",
@@ -1847,7 +1847,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register",
       "type": "plugin",
@@ -1899,7 +1899,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register",
       "type": "plugin",
@@ -1912,7 +1912,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register",
       "type": "plugin",
@@ -2055,10 +2055,10 @@
       "time": {
         "hooks": {
           "modifyConfig": [
-            1
+            0
           ]
         },
-        "register": 0
+        "register": 1
       },
       "type": "plugin",
       "path": "/Users/koolearn/Documents/dfzx/demo/monorepo/node_modules/.pnpm/dumi@2.4.21_@babel+core@7.28.5_@types+node@20.19.25_@types+react@18.3.27_@types+webpack@5.28._itlth56nxjkbb5ovvoeenjhrou/node_modules/dumi/dist/features/autoAlias.js",
@@ -2096,7 +2096,7 @@
       },
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "type": "plugin",
       "path": "/Users/koolearn/Documents/dfzx/demo/monorepo/node_modules/.pnpm/dumi@2.4.21_@babel+core@7.28.5_@types+node@20.19.25_@types+react@18.3.27_@types+webpack@5.28._itlth56nxjkbb5ovvoeenjhrou/node_modules/dumi/compiled/@umijs/plugins/index.js",
@@ -2108,7 +2108,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register",
       "type": "plugin",
@@ -2125,7 +2125,7 @@
             0
           ]
         },
-        "register": 1
+        "register": 0
       },
       "enableBy": "register",
       "type": "plugin",
@@ -2144,7 +2144,7 @@
             0
           ]
         },
-        "register": 15
+        "register": 7
       },
       "enableBy": "register",
       "type": "plugin",
@@ -2164,7 +2164,7 @@
             0
           ],
           "modifyRoutes": [
-            3
+            2
           ]
         },
         "register": 1
@@ -2223,7 +2223,7 @@
           ],
           "modifyAppData": [
             0,
-            2
+            3
           ]
         },
         "register": 15
@@ -2387,9 +2387,9 @@
       null
     ],
     "alias": {
-      "@dfzx/components": "/Users/koolearn/Documents/dfzx/demo/monorepo/packages/components/src",
-      "@dfzx/hooks": "/Users/koolearn/Documents/dfzx/demo/monorepo/packages/hooks/src",
-      "@dfzx/utils": "/Users/koolearn/Documents/dfzx/demo/monorepo/packages/utils/src"
+      "@xzy/components": "/Users/koolearn/Documents/dfzx/demo/monorepo/packages/components/src",
+      "@xzy/hooks": "/Users/koolearn/Documents/dfzx/demo/monorepo/packages/hooks/src",
+      "@xzy/utils": "/Users/koolearn/Documents/dfzx/demo/monorepo/packages/utils/src"
     }
   },
   "mainConfigFile": "/Users/koolearn/Documents/dfzx/demo/monorepo/.dumirc.ts",
@@ -2414,9 +2414,9 @@
       "react-dom": "/Users/koolearn/Documents/dfzx/demo/monorepo/node_modules/react-dom",
       "react-router": "/Users/koolearn/Documents/dfzx/demo/monorepo/node_modules/.pnpm/react-router@6.3.0_react@18.3.1/node_modules/react-router",
       "react-router-dom": "/Users/koolearn/Documents/dfzx/demo/monorepo/node_modules/.pnpm/react-router-dom@6.3.0_react-dom@18.3.1_react@18.3.1/node_modules/react-router-dom",
-      "@dfzx/components": "/Users/koolearn/Documents/dfzx/demo/monorepo/packages/components/src",
-      "@dfzx/hooks": "/Users/koolearn/Documents/dfzx/demo/monorepo/packages/hooks/src",
-      "@dfzx/utils": "/Users/koolearn/Documents/dfzx/demo/monorepo/packages/utils/src",
+      "@xzy/components": "/Users/koolearn/Documents/dfzx/demo/monorepo/packages/components/src",
+      "@xzy/hooks": "/Users/koolearn/Documents/dfzx/demo/monorepo/packages/hooks/src",
+      "@xzy/utils": "/Users/koolearn/Documents/dfzx/demo/monorepo/packages/utils/src",
       "@": "/Users/koolearn/Documents/dfzx/demo/monorepo",
       "@@": "/Users/koolearn/Documents/dfzx/demo/monorepo/.dumi/tmp-production",
       "regenerator-runtime": "/Users/koolearn/Documents/dfzx/demo/monorepo/node_modules/.pnpm/regenerator-runtime@0.13.11/node_modules/regenerator-runtime",
@@ -2641,6 +2641,9 @@
   "globalJS": [],
   "overridesCSS": [],
   "bundler": "webpack",
+  "git": {
+    "originUrl": "git@github.com:wulawulalei/monorepo.git"
+  },
   "framework": "react",
   "typescript": {
     "tsVersion": "5.9.3",
