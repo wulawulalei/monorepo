@@ -1,6 +1,6 @@
 {
   "name": "@xzy/hooks",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": false,
   "description": "xzy React hooks",
   "license": "MIT",
@@ -33,5 +33,3 @@
     "access": "public"
   }
 }
-
-
