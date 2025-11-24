@@ -1,0 +1,17 @@
+node_modules
+.turbo
+dist
+lib
+esm
+.DS_Store
+.idea
+.vscode
+.dumi/tmp
+.dumi/cache
+.umi
+.changeset/cache
+docs-dist
+.dumi/tmp
+.dumi/tmp-production
+
+
