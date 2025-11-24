@@ -14,8 +14,8 @@ export default defineConfig({
   },
   outputPath: "docs-dist",
   exportStatic: {},
-  base: "/",
-  publicPath: "/",
+  base: "/monorepo/",
+  publicPath: "/monorepo/",
   resolve: {
     atomDirs: [{ type: "component", dir: "packages/components/src" }],
   },

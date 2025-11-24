@@ -15,7 +15,9 @@
     "release": "changeset publish",
     "version-packages": "changeset version",
     "version-and-tag": "changeset version && git add .changeset package.json packages/*/package.json && git commit -m 'Update versions' && git tag -m 'Release versions' v$(node -e \"console.log(require('./package.json').version)\")",
-    "changeset": "changeset"
+    "changeset": "changeset",
+    "deploy": "gh-pages -d docs-dist",
+    "docs-build-and-publish": "dumi build && gh-pages -d docs-dist"
   },
   "devDependencies": {
     "@changesets/changelog-git": "^0.2.1",
@@ -26,6 +28,7 @@
     "@types/react-dom": "^18.3.1",
     "antd": "^5.20.0",
     "dumi": "^2.4.14",
+    "gh-pages": "^6.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tsup": "^8.3.5",
