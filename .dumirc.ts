@@ -31,8 +31,8 @@ export default defineConfig({
     },
   ],
   alias: {
-    "@xzy/components": resolve(__dirname, "packages/components/src"),
-    "@xzy/hooks": resolve(__dirname, "packages/hooks/src"),
-    "@xzy/utils": resolve(__dirname, "packages/utils/src"),
+    "@xzy18/components": resolve(__dirname, "packages/components/src"),
+    "@xzy18/hooks": resolve(__dirname, "packages/hooks/src"),
+    "@xzy18/utils": resolve(__dirname, "packages/utils/src"),
   },
 });
