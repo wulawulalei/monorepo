@@ -14,19 +14,12 @@
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "@xzy/components": ["packages/components/src"],
-      "@xzy/hooks": ["packages/hooks/src"],
-      "@xzy/utils": ["packages/utils/src"]
+      "@xzy18/components": ["packages/components/src"],
+      "@xzy18/hooks": ["packages/hooks/src"],
+      "@xzy18/utils": ["packages/utils/src"]
     },
     "types": ["node", "react", "react-dom"],
     "noEmit": true
   },
-  "include": [
-    "packages/*/src",
-    "docs",
-    ".dumirc.ts",
-    "tsup.config.ts"
-  ]
+  "include": ["packages/*/src", "docs", ".dumirc.ts", "tsup.config.ts"]
 }
-
-

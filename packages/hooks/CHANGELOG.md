@@ -1,4 +1,4 @@
-# @xzy/hooks
+# @xzy18/hooks
 
 ## 0.0.1
 

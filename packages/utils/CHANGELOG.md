@@ -1,4 +1,4 @@
-# @xzy/utils
+# @xzy18/utils
 
 ## 0.0.1
 

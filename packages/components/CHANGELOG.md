@@ -1,4 +1,4 @@
-# @xzy/components
+# @xzy18/components
 
 ## 0.0.1
 
