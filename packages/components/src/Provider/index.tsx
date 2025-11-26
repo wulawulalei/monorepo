@@ -17,7 +17,7 @@ export function AntdProvider({
       theme={{
         algorithm: antdTheme.defaultAlgorithm,
         token: {
-          colorPrimary: "#1677ff",
+          colorPrimary: "#36aafd",
         },
         ...theme,
       }}
