@@ -4,21 +4,16 @@
   "private": false,
   "description": "xzy React components built on Ant Design",
   "license": "MIT",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    }
-  },
+  "module": "es/index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "files": [
-    "dist"
+    "lib",
+    "dist",
+    "es"
   ],
   "scripts": {
-    "build": "tsup --config ../../tsup.config.ts",
+    "build": "father build",
     "prepack": "pnpm build"
   },
   "peerDependencies": {
@@ -29,10 +24,11 @@
   "devDependencies": {
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
-    "tsup": "^8.3.5",
+    "father": "^4.6.8",
     "typescript": "^5.6.3"
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "sideEffects": false
 }
