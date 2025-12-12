@@ -10,7 +10,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
-    "declarationMap": true,
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
@@ -18,8 +17,7 @@
       "@xzy18/hooks": ["packages/hooks/src"],
       "@xzy18/utils": ["packages/utils/src"]
     },
-    "types": ["node", "react", "react-dom"],
-    "noEmit": true
+    "types": ["node", "react", "react-dom"]
   },
   "include": ["packages/*/src", "docs", ".dumirc.ts"]
 }
