@@ -1,0 +1,13 @@
+{
+  "mode": "pre",
+  "tag": "alpha",
+  "initialVersions": {
+    "@xzy18/components": "0.0.1",
+    "@xzy18/hooks": "0.0.1",
+    "@xzy18/utils": "0.0.1"
+  },
+  "changesets": [
+    "sparkly-forks-hammer",
+    "wise-moles-fall"
+  ]
+}
