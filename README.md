@@ -1,4 +1,4 @@
-## DFZX Component Library Monorepo
+## Component Library Monorepo
 
 Stack: pnpm + turborepo + changesets + dumi + antd + react
 
