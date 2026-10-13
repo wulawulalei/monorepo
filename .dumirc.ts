@@ -9,7 +9,6 @@ export default defineConfig({
       { title: "首页", link: "/" },
       { title: "文档", link: "/docs" },
       { title: "组件", link: "/components" },
-      { title: "学习文档", link: "/study" },
     ],
   },
   outputPath: "docs-dist",
