@@ -27,17 +27,13 @@ $ pnpm i @xzy18/xzy-materials --save
 
 ```tsx | pure
 import React from "react";
-import { ProForm, ProFormText } from "@xdf/xzy-materials";
+import { Button } from "@xdf/xzy-materials";
 
 export default () => {
   return (
-    <ProForm
-      onFinish={async (values) => {
-        console.log(values);
-      }}
-    >
-      <ProFormText name="name" label="姓名" />
-    </ProForm>
+    <div>
+      <Button>按钮</Button>
+    </div>
   );
 };
 ```
