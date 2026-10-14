@@ -14,28 +14,24 @@ toc: content
 $ npm i -g pnpm@9.12.0
 ```
 
-### 安装依赖报错怎么办？
+## 新增包或者组件等
 
-先删除锁文件并重新安装，确保锁文件与 `packageManager` 版本一致：
+### 如何新增一个包？
 
-```shell
-$ rm -rf node_modules pnpm-lock.yaml
-$ pnpm install
-```
-
-### 支持什么 Node 版本？
-
-依赖 `antd@5`、`dumi@2`、`father@4` 均要求 Node.js 18 及以上，建议使用 Node 18 / 20 LTS。
-
-## 文档开发（dumi）
-
-### 如何本地预览文档？
+推荐直接用生成器，它会创建 `package.json`、`.fatherrc.ts`、`src/index.ts`，并把新包注册进 `tsconfig.json` 的 `paths` 和 `.dumirc.ts` 的 `alias`：
 
 ```shell
-$ pnpm dev
+$ pnpm gen package icons
 ```
 
-默认通过 dumi 启动开发服务，浏览器访问终端输出的地址即可。文档页面由 `docs/` 和 `packages/components/src/**/index.md` 中的 Markdown 自动生成。
+也可以手工创建，步骤如下：
+
+1. 在 `packages/` 下创建新目录。
+2. 新增 `package.json`，参考现有包的 `scripts.build: "father build"`、`module/main/types/files` 和 `publishConfig.access: "public"` 字段。
+3. 新增 `.fatherrc.ts` 并 `extends "../../father.config.ts"` 继承公共配置。
+4. 在 `packages/<name>/src/index.ts` 导出公共 API。
+
+`pnpm-workspace.yaml` 已使用 `packages/*` 通配，通常无需手工修改。
 
 ### 如何新增一个组件？
 
@@ -95,23 +91,6 @@ $ pnpm build
 
 类型声明一同输出到对应目录，包内 `types` 字段指向 `lib/index.d.ts`。
 
-### 如何新增一个包？
-
-推荐直接用生成器，它会创建 `package.json`、`.fatherrc.ts`、`src/index.ts`，并把新包注册进 `tsconfig.json` 的 `paths` 和 `.dumirc.ts` 的 `alias`：
-
-```shell
-$ pnpm gen package icons
-```
-
-也可以手工创建，步骤如下：
-
-1. 在 `packages/` 下创建新目录。
-2. 新增 `package.json`，参考现有包的 `scripts.build: "father build"`、`module/main/types/files` 和 `publishConfig.access: "public"` 字段。
-3. 新增 `.fatherrc.ts` 并 `extends "../../father.config.ts"` 继承公共配置。
-4. 在 `packages/<name>/src/index.ts` 导出公共 API。
-
-`pnpm-workspace.yaml` 已使用 `packages/*` 通配，通常无需手工修改。
-
 ### 构建产物为什么没更新？
 
 turborepo 会缓存 task 的产物。若产物目录未按预期刷新，先排查是否命中缓存，必要时清理：
@@ -142,12 +121,6 @@ $ pnpm release            # changeset publish 发布到 npm
 
 发布前需确认已登录且本地未提交的 changeset 已全部纳入本次版本更新。
 
-### 发布失败常见原因？
-
-- 未登录 npm：先执行 `npm login`。
-- 权限不足：确认包为公开包，各 `package.json` 需配置 `publishConfig.access: "public"`。
-- 分支不符：`.changeset/config.json` 中 `baseBranch` 为 `master`，需在对应分支执行发布。
-
 ### 变更日志如何生成？
 
 `version-packages` 在 changeset 更新版本后触发 `pnpm changelog`，由 `scripts/run-changelog.cjs` 基于 conventional-changelog 为每个包生成 `CHANGELOG.md`。
@@ -162,16 +135,4 @@ $ pnpm release            # changeset publish 发布到 npm
 
 ```shell
 $ pnpm i @xzy18/components antd react react-dom
-```
-
-### 组件需要 Provider 吗？
-
-接入 antd 主题或 ConfigProvider 能力时，请使用库提供的 `AntdProvider` 包裹，例如：
-
-```tsx | pure
-import { AntdProvider, Button } from "@xzy18/components";
-
-<AntdProvider>
-  <Button success>按钮</Button>
-</AntdProvider>;
 ```
