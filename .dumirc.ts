@@ -9,6 +9,7 @@ export default defineConfig({
       { title: "首页", link: "/" },
       { title: "文档", link: "/docs" },
       { title: "组件", link: "/components" },
+      { title: "Hooks", link: "/hooks" },
     ],
   },
   outputPath: "docs-dist",
@@ -16,7 +17,11 @@ export default defineConfig({
   base: "/monorepo/",
   publicPath: "/monorepo/",
   resolve: {
-    atomDirs: [{ type: "component", dir: "packages/components/src" }],
+    // type 会经 pluralize 变成路由前缀：component -> /components，hook -> /hooks
+    atomDirs: [
+      { type: "component", dir: "packages/components/src" },
+      { type: "hook", dir: "packages/hooks/src" },
+    ],
   },
   extraRemarkPlugins: [
     () => {
