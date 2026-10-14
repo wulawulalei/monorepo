@@ -1,0 +1,9 @@
+node_modules
+dist
+lib
+es
+esm
+docs-dist
+.dumi
+.turbo
+pnpm-lock.yaml
