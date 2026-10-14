@@ -17,6 +17,7 @@
     "version-packages": "changeset version && pnpm changelog",
     "version-and-tag": "changeset version && pnpm changelog && git add .changeset package.json packages/*/package.json packages/*/CHANGELOG.md && git commit -m 'Update versions' && git tag -m 'Release versions' v$(node -e \"console.log(require('./package.json').version)\")",
     "changeset": "changeset",
+    "changeset:auto": "node ./scripts/changeset-from-git.cjs",
     "gen": "node ./scripts/generators/index.cjs",
     "deploy": "gh-pages -d docs-dist",
     "docs-build-and-publish": "dumi build && gh-pages -d docs-dist"
