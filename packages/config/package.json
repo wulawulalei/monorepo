@@ -1,0 +1,36 @@
+{
+  "name": "@xzy18/config",
+  "version": "0.0.1",
+  "private": false,
+  "description": "Shared ESLint and Prettier configuration for xzy-materials packages",
+  "license": "MIT",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "eslint.js",
+    "prettier.js"
+  ],
+  "scripts": {},
+  "dependencies": {
+    "@eslint/js": "^8.57.1",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "@umijs/fabric": "^4.0.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "globals": "^13.24.0",
+    "prettier-plugin-organize-imports": "^3.2.4",
+    "prettier-plugin-packagejson": "^2.4.3"
+  },
+  "peerDependencies": {
+    "eslint": "^8.57.1",
+    "prettier": "^2.8.8"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
