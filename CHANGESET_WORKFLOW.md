@@ -34,6 +34,8 @@ pnpm version-and-tag
 - 提交版本更新的文件
 - 创建一个基于根项目版本的Git标签
 
+> 说明：只有正式版本才会写入 `CHANGELOG.md`。如果本次升到的是预发布版本（版本号带 `-`，如 `0.0.2-alpha.0`），`pnpm changelog` 会跳过该包，不生成 changelog 段落。
+
 ### 3. 构建项目
 
 ```bash

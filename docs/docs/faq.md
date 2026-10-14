@@ -127,6 +127,8 @@ $ pnpm release            # changeset publish 发布到 npm
 
 `version-packages` 在 changeset 更新版本后触发 `pnpm changelog`，由 `scripts/run-changelog.cjs` 基于 conventional-changelog 为每个包生成 `CHANGELOG.md`。
 
+仅正式版本会生成变更日志：当本次升到的是预发布版本（如 `0.0.2-alpha.0`）时，脚本会跳过该包，不会追加 changelog 段落；等转到正式版本（如 `0.0.2`）时再统一生成一次。
+
 ## 使用组件时的问题
 
 ### 为什么组件包不把 antd / react 打包进依赖？

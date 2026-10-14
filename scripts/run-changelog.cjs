@@ -18,6 +18,12 @@ function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
 
+// semver 预发布版本形如 0.0.2-alpha.0（主版本号后带 `-`），正式版本不含 `-`。
+// 非正式的预发布版本不生成 changelog。
+function isPrereleaseVersion(version) {
+  return version.includes('-');
+}
+
 // 读取 HEAD 上已提交的文件内容；如果该文件还没纳入版本控制（比如全新
 // 的包），返回 null。
 function getPreviousFileContent(relativePath) {
@@ -52,6 +58,13 @@ function getChangedPackages() {
       const previousPkg = previousContent ? JSON.parse(previousContent) : null;
 
       if (!previousPkg || previousPkg.version !== currentPkg.version) {
+        // 非正式（预发布）版本跳过：alpha/beta/rc 等不发变更日志，
+        // 等转到正式版本时再统一生成一次即可。
+        if (isPrereleaseVersion(currentPkg.version)) {
+          console.log(`Skip ${currentPkg.name}@${currentPkg.version}: prerelease versions have no changelog.`);
+          return null;
+        }
+
         return {
           dirName: entry.name,
           packageDir,
