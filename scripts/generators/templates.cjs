@@ -107,7 +107,7 @@ export default () => {
 function packageJson({ name, packageName, description }) {
   const manifest = {
     name: packageName,
-    version: '0.0.1',
+    version: '0.0.0',
     private: false,
     description,
     license: 'MIT',
