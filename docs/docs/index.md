@@ -27,7 +27,7 @@ $ pnpm i @xzy18/xzy-materials --save
 
 ```tsx | pure
 import React from "react";
-import { Button } from "@xdf/xzy-materials";
+import { Button } from "@xzy18/xzy-materials";
 
 export default () => {
   return (
