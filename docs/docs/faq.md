@@ -14,6 +14,43 @@ toc: content
 $ npm i -g pnpm@9.12.0
 ```
 
+### pnpm 和 npm / yarn 有什么区别？
+
+核心差异在「依赖如何落盘」和「node_modules 的结构」两点上：
+
+| 维度 | pnpm | npm / yarn（classic） |
+| --- | --- | --- |
+| 安装策略 | 全局内容寻址 store + 硬链接，同一版本只存一份 | 各自下载后再拷贝进 node_modules |
+| node_modules 结构 | 严格嵌套 + 符号链接，只暴露 package.json 里声明过的依赖 | 扁平化提升，未声明的依赖也可能被 `import` 到 |
+| workspace | 原生支持 `workspace:*`，发布时自动改写成实际版本号 | 有 workspaces，但本地引用需自行处理版本 |
+| 磁盘占用 / 速度 | 更省磁盘，重复安装更快 | 占用更大，重复安装更慢 |
+| 锁文件 | 单个 `pnpm-lock.yaml`，配合 `--frozen-lockfile` 可复现 | `package-lock.json` / `yarn.lock` |
+
+对本项目来说，实际收益主要是：
+
+- **拦截幽灵依赖**：扁平结构下能 `import` 一个没写进 `package.json` 的包（靠上层提升侥幸命中），换环境就会挂；pnpm 的严格结构会直接报错，逼着把依赖声明补全。
+- **包间引用可靠**：需要互相依赖时用 `workspace:*` 指到本地源码，发布时再替换成真实版本，避免误装 npm 上的旧版本。
+- **锁文件唯一**：CI 与本地共用一份 `pnpm-lock.yaml`，不会因为 npm/yarn 各写一个锁文件而产生漂移。
+
+> 注意：包管理器不能混用。仓库里只维护 `pnpm-lock.yaml`，用 npm/yarn 安装会重新生成一套依赖树，进而出现「本地能跑、CI 挂掉」的问题。
+
+### 为什么不用 lerna？
+
+Lerna 解决的是三件事：多包依赖安装（`bootstrap`）、统一版本管理、发布。这三件事在本项目里已经由更单一、更现代的工具分别承担：
+
+| 职责 | 本项目选型 | 相比 lerna |
+| --- | --- | --- |
+| 依赖安装与链接 | pnpm workspace | lerna 自己不装依赖，6.x 起把安装委托给 `npmClient`（npm/yarn/pnpm），等于还得再选一个包管理器 |
+| 任务编排与缓存 | turborepo | `lerna run` 只是并发跑脚本，没有任务依赖图，也没有产物缓存；turbo 支持 `dependsOn` 与缓存（见 `turbo.json` 的 `outputs`） |
+| 版本与发布 | changesets | lerna 的 fixed / locked 版本模式偏重；本项目要的是按包独立的 patch / minor / major + 自动 CHANGELOG + 预发布跳过，changesets 更贴合（见 `CHANGESET_WORKFLOW.md`） |
+
+另外两点现实原因：
+
+- **定位变化**：Lerna 6 起由 Nx 团队接管，官方已将其定位为维护模式并建议迁移到 Nx，新项目再引入 lerna 的收益有限。
+- **依赖提升的老问题**：lerna 的 `bootstrap --hoist` 依赖符号链接与提升，容易出现幽灵依赖和版本不一致，与 pnpm 严格结构的方向相反。
+
+所以本项目采用 `pnpm workspace + turborepo + changesets` 这套组合，各自只做一件事，且已是社区主流方案，无需再叠加 lerna。
+
 ## 新增包或者组件等
 
 ### 如何新增一个包？
