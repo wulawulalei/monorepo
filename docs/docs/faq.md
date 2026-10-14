@@ -37,17 +37,34 @@ $ pnpm dev
 
 默认通过 dumi 启动开发服务，浏览器访问终端输出的地址即可。文档页面由 `docs/` 和 `packages/components/src/**/index.md` 中的 Markdown 自动生成。
 
+### 如何新增一个组件？
+
+推荐用 `pnpm gen` 生成脚手架，一步到位：
+
+```shell
+$ pnpm gen component ProTable --title "高级表格"
+```
+
+它会创建 `packages/components/src/ProTable/{index.tsx,index.md}`，并把 `export { ProTable } from "./ProTable";` 追加到 `packages/components/src/index.ts`。文档 `order` 会自动取同级最大值 +1，`group` 默认 «基础»（可用 `--group` 覆盖）。若目标文件已存在，脚本会报错退出，确认覆盖请追加 `--force`。
+
+同理还有 `pnpm gen hook useLoading`（hooks 包，结构与组件一致，同时产出 `index.ts` 与 `index.md`，文档路由为 `/hooks/*`）和 `pnpm gen package icons`（新包，会自动注册 `tsconfig.json` 的 `paths` 与 `.dumirc.ts` 的 `alias`）。不带参数执行 `pnpm gen` 可查看全部用法。
+
 ### 新增组件后为什么文档里看不到它？
 
-dumi 通过 `.dumirc.ts` 中的 `resolve.atomDirs` 扫描组件目录：
+dumi 通过 `.dumirc.ts` 中的 `resolve.atomDirs` 扫描组件与 hooks 目录：
 
 ```ts
 resolve: {
-  atomDirs: [{ type: "component", dir: "packages/components/src" }],
+  atomDirs: [
+    { type: "component", dir: "packages/components/src" },
+    { type: "hook", dir: "packages/hooks/src" },
+  ],
 }
 ```
 
-请确认组件代码位于 `packages/components/src` 下，并且在当前组件目录保留一个带 frontmatter（`title`）的 `index.md`。新增文件后需重启 `pnpm dev` 让 dumi 重新扫描。
+`type` 会经 pluralize 变成路由前缀：`component` → `/components`，`hook` → `/hooks`。
+
+请确认代码位于对应的 atomDirs 目录下，并且在当前目录保留一个带 frontmatter（`title`）的 `index.md`。新增文件后需重启 `pnpm dev` 让 dumi 重新扫描。
 
 ### 文档里如何引用本地包？
 
@@ -79,6 +96,14 @@ $ pnpm build
 类型声明一同输出到对应目录，包内 `types` 字段指向 `lib/index.d.ts`。
 
 ### 如何新增一个包？
+
+推荐直接用生成器，它会创建 `package.json`、`.fatherrc.ts`、`src/index.ts`，并把新包注册进 `tsconfig.json` 的 `paths` 和 `.dumirc.ts` 的 `alias`：
+
+```shell
+$ pnpm gen package icons
+```
+
+也可以手工创建，步骤如下：
 
 1. 在 `packages/` 下创建新目录。
 2. 新增 `package.json`，参考现有包的 `scripts.build: "father build"`、`module/main/types/files` 和 `publishConfig.access: "public"` 字段。
