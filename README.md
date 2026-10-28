@@ -29,9 +29,11 @@ pnpm build
 pnpm changeset
 # bump versions
 pnpm version-packages
-# publish to npm (ensure you are logged in)
+# publish with an npm granular token that bypasses 2FA
 pnpm release
 ```
+
+`pnpm release` 默认使用非交互认证，需要在 `~/.npmrc` 中配置具备 `@xzy18` 写权限并启用 2FA bypass 的 npm Granular Access Token。临时需要使用 OTP 时，可运行 `pnpm release:otp`；预发布版本对应 `pnpm release:alpha` 和 `pnpm release:alpha:otp`。
 
 ### Workspace layout
 
