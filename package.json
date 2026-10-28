@@ -13,6 +13,7 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "release": "changeset publish",
+    "release:alpha": "changeset publish --no-git-tag --tag alpha",
     "changelog": "node ./scripts/run-changelog.cjs",
     "version-packages": "changeset version && pnpm changelog",
     "version-and-tag": "changeset version && pnpm changelog && git add .changeset package.json packages/*/package.json packages/*/CHANGELOG.md && git commit -m 'Update versions' && git tag -m 'Release versions' v$(node -e \"console.log(require('./package.json').version)\")",
