@@ -291,7 +291,7 @@ function collectChangedPathsForPackage(packageName, packageDir) {
 /**
  * 解析命令行参数
  * @param {string[]} argv - process.argv.slice(2)
- * @returns {{ bump: string|null, base: string|null, dryRun: boolean, packages: string[]|null, summary: string|null, help: boolean }}
+ * @returns {{ bump: string|null, base: string|null, dryRun: boolean, packages: string[]|null, help: boolean }}
  */
 function parseArgs(argv) {
   const args = {
@@ -299,7 +299,6 @@ function parseArgs(argv) {
     base: null,
     dryRun: false,
     packages: null,
-    summary: null,
   };
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -328,10 +327,6 @@ function parseArgs(argv) {
         .split(',')
         .map((s) => s.trim())
         .filter(Boolean);
-    } else if (arg === '--summary' || arg === '-m') {
-      args.summary = argv[++i];
-    } else if (arg.startsWith('--summary=')) {
-      args.summary = arg.slice('--summary='.length);
     }
   }
 
@@ -359,7 +354,6 @@ function printHelp() {
   --packages <names>           逗号分隔的包名列表，跳过自动检测
                                （如 "@xzy18/components,@xzy18/utils"）。
                                支持完整包名或目录名。
-  -m, --summary <text>         changeset 正文中的变更描述
   --dry-run                    只打印结果，不写入文件
   -h, --help                   显示帮助`);
 }
@@ -368,15 +362,14 @@ function printHelp() {
  * 构建 changeset 文件内容（frontmatter + 描述）
  * @param {Array<[string, string]>} affectedPackages - 受影响的包列表
  * @param {string} bump - 版本升级类型（patch/minor/major）
- * @param {string} summary - 变更描述
  * @returns {string} changeset 文件内容
  */
-function buildChangesetContent(affectedPackages, bump, summary) {
+function buildChangesetContent(affectedPackages, bump) {
   const lines = ['---'];
   for (const [, packageName] of affectedPackages) {
     lines.push(`"${packageName}": ${bump}`);
   }
-  lines.push('---', '', summary || '根据 Git 变更自动生成的 changeset。', '');
+  lines.push('---', '', '根据 Git 变更自动生成的 changeset。', '');
   return lines.join('\n');
 }
 
@@ -452,7 +445,7 @@ function run() {
     console.log(`  ${name} (${dir})`);
   }
 
-  const content = buildChangesetContent(affectedPackages, bump, args.summary);
+  const content = buildChangesetContent(affectedPackages, bump);
 
   if (args.dryRun) {
     console.log('');
