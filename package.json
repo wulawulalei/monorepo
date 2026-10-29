@@ -12,18 +12,15 @@
     "docs:build": "dumi build",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "release": "CI=true changeset publish",
-    "release:alpha": "CI=true changeset publish --no-git-tag --tag alpha",
+    "release": "node ./scripts/release.cjs",
+    "release:docs": "dumi build && gh-pages -d docs-dist",
     "alpha:enter": "changeset pre enter alpha",
     "alpha:exit": "changeset pre exit",
     "changelog": "node ./scripts/run-changelog.cjs",
     "version-packages": "changeset version && pnpm changelog",
-    "version-and-tag": "changeset version && pnpm changelog && git add .changeset package.json packages/*/package.json packages/*/CHANGELOG.md && git commit -m 'Update versions' && git tag -m 'Release versions' v$(node -e \"console.log(require('./package.json').version)\")",
     "changeset": "changeset",
     "changeset:auto": "node ./scripts/changeset-from-git.cjs",
-    "gen": "node ./scripts/generators/index.cjs",
-    "deploy": "gh-pages -d docs-dist",
-    "docs-build-and-publish": "dumi build && gh-pages -d docs-dist"
+    "gen": "node ./scripts/generators/index.cjs"
   },
   "devDependencies": {
     "@babel/core": "^7.28.5",
