@@ -1,6 +1,6 @@
 {
   "name": "@xzy18/config",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": false,
   "description": "Shared ESLint and Prettier configuration for xzy-materials packages",
   "license": "MIT",
