@@ -27,13 +27,22 @@ pnpm build
 ```bash
 # create a changeset
 pnpm changeset
-# bump versions
-pnpm version-packages
-# publish with an npm granular token that bypasses 2FA
+# bump versions, build, commit, publish, and push tags
 pnpm release
 ```
 
-`pnpm release` 默认使用非交互认证，需要在 `~/.npmrc` 中配置具备 `@xzy18` 写权限并启用 2FA bypass 的 npm Granular Access Token。临时需要使用 OTP 时，可运行 `pnpm release:otp`；预发布版本对应 `pnpm release:alpha` 和 `pnpm release:alpha:otp`。
+`pnpm release` 会完成版本升级、CHANGELOG、构建、发布提交、npm 发布、tag 推送和文档部署。执行前需要保证工作区干净，并在 `~/.npmrc` 中配置具备 `@xzy18` 写权限的 npm Granular Access Token。
+
+`master` 只能发布正式包并部署文档，`test` 只能发布 alpha 包且不更新正式文档。alpha 发布流程：
+
+```bash
+git switch test
+pnpm alpha:enter
+pnpm changeset
+pnpm release
+# 完成全部 alpha 版本后
+pnpm alpha:exit
+```
 
 ### Workspace layout
 

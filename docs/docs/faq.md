@@ -151,12 +151,12 @@ $ pnpm changeset
 ### 如何发版本并发布到 npm？
 
 ```shell
-$ pnpm version-packages   # 更新版本号并生成 CHANGELOG
-$ pnpm build              # 重新构建产物
-$ pnpm release            # changeset publish 发布到 npm
+$ pnpm release            # 版本、构建、发布并推送 tag
 ```
 
-发布前需确认已登录且本地未提交的 changeset 已全部纳入本次版本更新。
+发布脚本要求工作区干净。`master` 只能发布正式包并部署文档，`test` 只能发布 alpha 包且不更新正式文档。发布成功后会提交版本改动并推送包级 tag。
+
+alpha 发布需切换到 `test` 分支，运行 `pnpm alpha:enter` 并创建 changeset，再运行 `pnpm release`。全部 alpha 版本完成后运行 `pnpm alpha:exit`。
 
 ### 变更日志如何生成？
 

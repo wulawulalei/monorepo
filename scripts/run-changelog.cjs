@@ -1,7 +1,7 @@
 // 基于约定式提交（conventional commits）为每个包生成 CHANGELOG.md。
 //
 // 设计为紧接在 `changeset version` 之后运行（见 package.json 里的
-// `version-packages` / `version-and-tag` 脚本）：此时 changesets 已经把各包的
+// `version-packages` / `release` 脚本）：此时 changesets 已经把各包的
 // package.json 版本号改好，我们只为这些刚升版的包重新生成 changelog，并把新的
 // release 段落追加到文件顶部。
 const fs = require('fs');
