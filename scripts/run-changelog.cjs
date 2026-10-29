@@ -78,6 +78,18 @@ function getChangedPackages() {
     .filter(Boolean);
 }
 
+// 在标题前和文件末尾补齐空行，避免新生成的 commit 列表与旧内容粘连。
+function normalizeChangelogSpacing(filePath) {
+  const content = fs.readFileSync(filePath, 'utf8');
+  const normalizedContent = `${content
+    .replace(/([^\n])\n(?=#{1,6}\s)/g, '$1\n\n')
+    .replace(/\n+$/, '')}\n\n`;
+
+  if (content !== normalizedContent) {
+    fs.writeFileSync(filePath, normalizedContent);
+  }
+}
+
 function run() {
   const changedPackages = getChangedPackages();
 
@@ -122,6 +134,8 @@ function run() {
         stdio: 'inherit',
       }
     );
+
+    normalizeChangelogSpacing(changelogPath);
   }
 }
 
