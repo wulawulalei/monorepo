@@ -1,3 +1,9 @@
+## [0.0.3](https://github.com/wulawulalei/monorepo/compare/@xzy18/utils@0.0.2...@xzy18/utils@0.0.3) (2026-10-29)
+
+### Features
+
+* 增加限制范围功能 ([e22e793](https://github.com/wulawulalei/monorepo/commit/e22e79367716743786daad0b60f9e92fc094ffa8))
+
 ## 0.0.2 (2026-10-13)
 
 ### Features
@@ -8,6 +14,7 @@
 * log ([c456025](https://github.com/wulawulalei/monorepo/commit/c456025a5ea2ac89102bd56622a6a94ec5e708e4))
 * script hook调整 ([5071aa4](https://github.com/wulawulalei/monorepo/commit/5071aa48166c4ade98a5b330111d2ab6e4ff68aa))
 * 名称更改 ([1806ee7](https://github.com/wulawulalei/monorepo/commit/1806ee700df1584d80d12597ba9aa648309b7168))
+
 # @xzy18/utils
 
 ## 0.0.2-alpha.0
@@ -21,3 +28,4 @@
 ### Patch Changes
 
 - chore:首次发布
+
