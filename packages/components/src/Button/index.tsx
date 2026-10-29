@@ -7,6 +7,5 @@ export type ButtonProps = AntdButtonProps & {
 
 export const Button: React.FC<ButtonProps> = ({ success, type, ...rest }) => {
   const mergedType = success ? "primary" : type;
-  console.log(123, '123');
   return <AntdButton type={mergedType} {...rest} />;
 };

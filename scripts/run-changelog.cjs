@@ -69,6 +69,7 @@ function getChangedPackages() {
           dirName: entry.name,
           packageDir,
           packageJsonPath,
+          packageName: currentPkg.name,
         };
       }
 
@@ -93,6 +94,7 @@ function run() {
     //   -p              使用 conventionalcommits 预设（按 feat/fix/perf… 分节）
     //   -i + -s         读取已有的 CHANGELOG.md，并原地写回同一个文件
     //   -k              从这个 package.json 读取当前版本号
+    //   -t              只识别当前包的发布 tag，避免从最早提交开始统计
     //   --commit-path   只统计改动了该包目录的 commit
     // 注意：release count 默认为 1，所以只生成并前置最新一次 release 的段落；
     // 若要重建整份文件，需在这里加上 `-r 0`。
@@ -110,6 +112,8 @@ function run() {
         '-s',
         '-k',
         pkg.packageJsonPath,
+        '-t',
+        `${pkg.packageName}@`,
         '--commit-path',
         pkg.packageDir,
       ],
