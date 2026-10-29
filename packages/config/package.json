@@ -4,16 +4,17 @@
   "private": false,
   "description": "Shared ESLint and Prettier configuration for xzy-materials packages",
   "license": "MIT",
-  "main": "index.js",
   "exports": {
-    ".": "./index.js"
+    ".": "./src/index.js"
   },
+  "main": "src/index.js",
   "files": [
-    "index.js",
-    "eslint.js",
-    "prettier.js"
+    "src"
   ],
-  "scripts": {},
+  "scripts": {
+    "build": "father build",
+    "prepack": "pnpm build"
+  },
   "dependencies": {
     "@eslint/js": "^8.57.1",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
