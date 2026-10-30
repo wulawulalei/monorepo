@@ -166,6 +166,8 @@ alpha 发布需切换到 `test` 分支，运行 `pnpm alpha:enter` 并创建 cha
 
 `material-components` 通过 `workspace:*` 依赖运行时子包。任一子包升版后，已不在原精确版本范围内，Changesets 会按默认策略自动为聚合包补一个 patch。因此只需要给实际改动的子包创建 changeset，不需要再手写一份 `material-components` 的 changeset。
 
+变更日志也会对 `material-components` 做特殊处理：仅当它直接依赖的 workspace 子包版本发生变化时，额外记录对应的子包名称和新版本。普通包及外部依赖的版本变化不会触发这条日志。
+
 ### 变更日志如何生成？
 
 `version-packages` 在 changeset 更新版本后触发 `pnpm changelog`，由 `scripts/run-changelog.cjs` 基于 conventional-changelog 为每个包生成 `CHANGELOG.md`。
