@@ -10,12 +10,54 @@ const { execFileSync } = require('child_process');
 
 const repoRoot = path.resolve(__dirname, '..');
 const packagesDir = path.join(repoRoot, 'packages');
+const materialComponentsName = '@xzy18/material-components';
 // 覆盖 preset 默认的组内排序，让 commit 按提交时间从新到旧排列（精确到秒）。
 // 具体规则见该配置文件。
 const changelogConfigPath = path.join(__dirname, 'changelog.config.cjs');
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// 定位指定版本段落的起止位置，便于检查或补充已有内容。
+function findVersionSection(content, version) {
+  const escapedVersion = escapeRegExp(version);
+  const headerPattern = new RegExp(
+    `^## (?:\\[${escapedVersion}\\]\\([^\\n]+\\)|${escapedVersion})(?: \\([^\\n]+\\))?$`,
+    'm',
+  );
+  const header = headerPattern.exec(content);
+
+  if (!header) {
+    return null;
+  }
+
+  const sectionStart = header.index;
+  const contentStart = sectionStart + header[0].length;
+  const nextHeaderOffset = content.slice(contentStart).search(/^##\s/m);
+  const sectionEnd =
+    nextHeaderOffset === -1 ? content.length : contentStart + nextHeaderOffset;
+
+  return {
+    sectionStart,
+    contentStart,
+    sectionEnd,
+    sectionContent: content.slice(contentStart, sectionEnd),
+  };
+}
+
+// 检查当前版本是否已有 changelog 段落，避免重复执行时追加相同内容。
+function hasVersionSection(changelogPath, version) {
+  if (!fs.existsSync(changelogPath)) {
+    return false;
+  }
+
+  const content = fs.readFileSync(changelogPath, 'utf8');
+  return Boolean(findVersionSection(content, version));
 }
 
 // semver 预发布版本形如 0.0.2-alpha.0（主版本号后带 `-`），正式版本不含 `-`。
@@ -52,7 +94,9 @@ function getChangedPackages() {
         return null;
       }
 
-      const relativePackageJsonPath = path.relative(repoRoot, packageJsonPath).replace(/\\/g, '/');
+      const relativePackageJsonPath = path
+        .relative(repoRoot, packageJsonPath)
+        .replace(/\\/g, '/');
       const currentPkg = readJson(packageJsonPath);
       const previousContent = getPreviousFileContent(relativePackageJsonPath);
       const previousPkg = previousContent ? JSON.parse(previousContent) : null;
@@ -61,7 +105,9 @@ function getChangedPackages() {
         // 非正式（预发布）版本跳过：alpha/beta/rc 等不发变更日志，
         // 等转到正式版本时再统一生成一次即可。
         if (isPrereleaseVersion(currentPkg.version)) {
-          console.log(`Skip ${currentPkg.name}@${currentPkg.version}: prerelease versions have no changelog.`);
+          console.log(
+            `Skip ${currentPkg.name}@${currentPkg.version}: prerelease versions have no changelog.`,
+          );
           return null;
         }
 
@@ -70,6 +116,7 @@ function getChangedPackages() {
           packageDir,
           packageJsonPath,
           packageName: currentPkg.name,
+          currentPkg,
         };
       }
 
@@ -90,6 +137,122 @@ function normalizeChangelogSpacing(filePath) {
   }
 }
 
+// 读取 HEAD 上指定包的 package.json，用于计算本次内部依赖的版本变化。
+function getPreviousPackage(relativePath) {
+  const previousContent = getPreviousFileContent(relativePath);
+  return previousContent ? JSON.parse(previousContent) : null;
+}
+
+// 建立包名到包目录的映射，避免依赖包目录名与包名不一致时无法匹配。
+function getWorkspacePackages() {
+  return new Map(
+    fs
+      .readdirSync(packagesDir, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => {
+        const packageDir = path.join(packagesDir, entry.name);
+        const packageJsonPath = path.join(packageDir, 'package.json');
+
+        if (!fs.existsSync(packageJsonPath)) {
+          return null;
+        }
+
+        const packageJson = readJson(packageJsonPath);
+        return [
+          packageJson.name,
+          {
+            dirName: entry.name,
+            packageDir,
+            packageJsonPath,
+            packageName: packageJson.name,
+            currentPkg: packageJson,
+          },
+        ];
+      })
+      .filter(Boolean),
+  );
+}
+
+// 只汇总 material-components 直接依赖的子包版本变化。
+function getMaterialComponentsDependencyChanges(pkg) {
+  if (pkg.packageName !== materialComponentsName) {
+    return [];
+  }
+
+  const changes = [];
+  const workspacePackages = getWorkspacePackages();
+
+  for (const dependencyName of Object.keys(pkg.currentPkg.dependencies || {})) {
+    const dependencyPackage = workspacePackages.get(dependencyName);
+    if (!dependencyPackage) {
+      continue;
+    }
+
+    const previousDependencyPackage = getPreviousPackage(
+      path
+        .relative(repoRoot, dependencyPackage.packageJsonPath)
+        .replace(/\\/g, '/'),
+    );
+
+    if (!previousDependencyPackage) {
+      changes.push(
+        `- 新增工作区依赖 ${dependencyName}@${dependencyPackage.currentPkg.version}`,
+      );
+      continue;
+    }
+
+    if (
+      previousDependencyPackage.version !== dependencyPackage.currentPkg.version
+    ) {
+      changes.push(
+        `- 更新工作区依赖 ${dependencyName} 至 ${dependencyPackage.currentPkg.version}`,
+      );
+    }
+  }
+
+  return changes;
+}
+
+// 在当前版本段落中补充内部依赖变化；已有相同说明时保持原样。
+function appendDependencyChanges(changelogPath, version, changes) {
+  if (changes.length === 0) {
+    return;
+  }
+
+  const existingContent = fs.existsSync(changelogPath)
+    ? fs.readFileSync(changelogPath, 'utf8')
+    : '';
+  const section = findVersionSection(existingContent, version);
+  const pendingChanges = changes.filter(
+    (change) => !existingContent.includes(change),
+  );
+
+  if (pendingChanges.length === 0) {
+    return;
+  }
+
+  if (!section) {
+    const releaseDate = new Date().toISOString().slice(0, 10);
+    const newSection = `## ${version} (${releaseDate})\n\n### Patch Changes\n\n${pendingChanges.join(
+      '\n',
+    )}\n\n`;
+    fs.writeFileSync(changelogPath, `${newSection}${existingContent}`);
+    return;
+  }
+
+  const sectionContent = section.sectionContent.replace(/\s+$/, '');
+  const subsection = sectionContent.includes('### Patch Changes')
+    ? `\n${pendingChanges.join('\n')}`
+    : `\n\n### Patch Changes\n\n${pendingChanges.join('\n')}`;
+  const updatedContent = `${existingContent.slice(
+    0,
+    section.contentStart,
+  )}${sectionContent}${subsection}\n\n${existingContent.slice(
+    section.sectionEnd,
+  )}`;
+  fs.writeFileSync(changelogPath, updatedContent);
+}
+
 function run() {
   const changedPackages = getChangedPackages();
 
@@ -100,6 +263,17 @@ function run() {
 
   for (const pkg of changedPackages) {
     const changelogPath = path.join(pkg.packageDir, 'CHANGELOG.md');
+    const dependencyChanges = getMaterialComponentsDependencyChanges(pkg);
+
+    // 当前版本已经生成过段落时直接跳过，保证脚本可以重复执行。
+    if (hasVersionSection(changelogPath, pkg.currentPkg.version)) {
+      appendDependencyChanges(
+        changelogPath,
+        pkg.currentPkg.version,
+        dependencyChanges,
+      );
+      continue;
+    }
 
     // 参数说明：
     //   --config        我们的排序覆盖配置（组内按时间从新到旧）
@@ -132,11 +306,22 @@ function run() {
       {
         cwd: repoRoot,
         stdio: 'inherit',
-      }
+      },
     );
 
+    appendDependencyChanges(
+      changelogPath,
+      pkg.currentPkg.version,
+      dependencyChanges,
+    );
     normalizeChangelogSpacing(changelogPath);
   }
 }
 
-run();
+if (require.main === module) {
+  run();
+}
+
+module.exports = {
+  getMaterialComponentsDependencyChanges,
+};
