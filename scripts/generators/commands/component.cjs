@@ -25,6 +25,8 @@ function run({ positionals, flags }, { cwd }) {
   const title = typeof flags.title === 'string' ? `${name} ${flags.title}` : name;
   const componentsPkg = utils.readJson(path.resolve(cwd, 'packages/components/package.json'));
   const importName = componentsPkg && componentsPkg.name ? componentsPkg.name : '@xzy18/components';
+  const materialPkg = utils.readJson(path.resolve(cwd, utils.MATERIAL_PACKAGE_JSON));
+  const docImportName = materialPkg && materialPkg.name ? materialPkg.name : importName;
 
   utils.info(`生成组件 ${name}（分组 ${group}，order ${order}）`);
   try {
@@ -34,7 +36,7 @@ function run({ positionals, flags }, { cwd }) {
     });
     utils.writeFile(
       path.join(COMPONENTS_DIR, name, 'index.md'),
-      templates.componentDoc({ name, title, group, order, importName }),
+      templates.componentDoc({ name, title, group, order, importName: docImportName }),
       { force: flags.force, cwd },
     );
   } catch (error) {
@@ -43,6 +45,7 @@ function run({ positionals, flags }, { cwd }) {
   }
 
   utils.appendExport(BARREL, name, `./${name}`, { cwd });
+  utils.syncMaterialPackage(importName, { cwd });
   utils.log('');
   utils.info(`dumi 的 atomDirs 已覆盖 ${COMPONENTS_DIR}，重启 pnpm dev 即可看到新的文档页。`);
   return 0;

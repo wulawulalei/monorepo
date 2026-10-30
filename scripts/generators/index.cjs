@@ -53,6 +53,7 @@ function printHelp() {
   utils.log('  pnpm gen component ProTable --title "高级表格"');
   utils.log('  pnpm gen hook useLoading');
   utils.log('  pnpm gen package icons');
+  utils.log('  pnpm gen package config --no-material');
 }
 
 // 入口：解析参数并分发子命令，返回值作为进程退出码

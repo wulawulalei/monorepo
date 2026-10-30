@@ -26,6 +26,8 @@ function run({ positionals, flags }, { cwd }) {
   const title = typeof flags.title === 'string' ? `${name} ${flags.title}` : name;
   const hooksPkg = utils.readJson(path.resolve(cwd, 'packages/hooks/package.json'));
   const importName = hooksPkg && hooksPkg.name ? hooksPkg.name : '@xzy18/hooks';
+  const materialPkg = utils.readJson(path.resolve(cwd, utils.MATERIAL_PACKAGE_JSON));
+  const docImportName = materialPkg && materialPkg.name ? materialPkg.name : importName;
 
   utils.info(`生成 hook ${name}（分组 ${group}，order ${order}）`);
   try {
@@ -35,7 +37,7 @@ function run({ positionals, flags }, { cwd }) {
     });
     utils.writeFile(
       path.join(HOOKS_DIR, name, 'index.md'),
-      templates.hookDoc({ name, title, group, order, importName }),
+      templates.hookDoc({ name, title, group, order, importName: docImportName }),
       { force: flags.force, cwd },
     );
   } catch (error) {
@@ -44,6 +46,7 @@ function run({ positionals, flags }, { cwd }) {
   }
 
   utils.appendExport(BARREL, name, `./${name}`, { cwd });
+  utils.syncMaterialPackage(importName, { cwd });
   utils.log('');
   utils.info(`目录结构与组件一致（${HOOKS_DIR}/${name}/index.ts），后续新增的类型、常量可以放在同一目录下。`);
   utils.info(`文档页已生成，dumi 的 atomDirs 已覆盖 ${HOOKS_DIR}，重启 pnpm dev 即可看到 /hooks 下的新页面。`);

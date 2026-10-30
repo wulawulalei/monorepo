@@ -3,6 +3,11 @@
 const fs = require('fs');
 const path = require('path');
 
+// 统一运行时入口，组件、Hook 与新包生成后默认同步到这里
+const MATERIAL_COMPONENTS_DIR = 'packages/material-components';
+const MATERIAL_BARREL = `${MATERIAL_COMPONENTS_DIR}/src/index.ts`;
+const MATERIAL_PACKAGE_JSON = `${MATERIAL_COMPONENTS_DIR}/package.json`;
+
 const ESC = '\x1b[';
 const style = {
   reset: `${ESC}0m`,
@@ -56,6 +61,11 @@ function readJson(filePath) {
   }
 }
 
+// 以仓库统一的格式写入 JSON，供包入口配置自动维护
+function writeJson(absolute, value) {
+  fs.writeFileSync(absolute, `${JSON.stringify(value, null, 2)}\n`);
+}
+
 // 判断相对路径是否存在（相对于 cwd）
 function fileExists(relativePath, { cwd = process.cwd() } = {}) {
   return fs.existsSync(path.resolve(cwd, relativePath));
@@ -89,6 +99,62 @@ function appendExport(relativeBarrel, exportName, source, { cwd = process.cwd() 
   fs.writeFileSync(absolute, `${content.replace(/\s*$/, '')}\n${line}\n`);
   ok(`登记导出 ${relativeBarrel} -> ${line}`);
   return true;
+}
+
+// 确保统一入口转导出指定子包；export * 会自动覆盖该包后续新增的成员
+function ensureBarrelExport(relativeBarrel, packageName, { cwd = process.cwd() } = {}) {
+  const absolute = path.resolve(cwd, relativeBarrel);
+  if (!fs.existsSync(absolute)) {
+    warn(`未找到统一入口 ${relativeBarrel}，请手动补充 export * from "${packageName}"`);
+    return false;
+  }
+
+  const content = fs.readFileSync(absolute, 'utf8');
+  const escapedName = packageName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const exportPattern = new RegExp(
+    `^\\s*export\\s+\\*\\s+from\\s+["']${escapedName}["'];?\\s*$`,
+    'm',
+  );
+  if (exportPattern.test(content)) {
+    info(`${relativeBarrel} 已包含 ${packageName}，跳过`);
+    return false;
+  }
+
+  const line = `export * from "${packageName}";`;
+  fs.writeFileSync(absolute, `${content.replace(/\s*$/, '')}\n${line}\n`);
+  ok(`登记统一导出 ${relativeBarrel} -> ${line}`);
+  return true;
+}
+
+// 将运行时包加入 material-components 的依赖与统一入口
+function syncMaterialPackage(packageName, { cwd = process.cwd() } = {}) {
+  const manifestPath = path.resolve(cwd, MATERIAL_PACKAGE_JSON);
+  if (!fs.existsSync(manifestPath)) {
+    warn(`未找到 ${MATERIAL_PACKAGE_JSON}，跳过 material-components 聚合`);
+    return false;
+  }
+
+  const manifest = readJson(manifestPath);
+  if (!manifest || typeof manifest !== 'object') {
+    warn(`${MATERIAL_PACKAGE_JSON} 无法解析，跳过 material-components 聚合`);
+    return false;
+  }
+
+  let changed = false;
+  if (!manifest.dependencies || typeof manifest.dependencies !== 'object') {
+    manifest.dependencies = {};
+  }
+  if (manifest.dependencies[packageName] !== 'workspace:*') {
+    manifest.dependencies[packageName] = 'workspace:*';
+    writeJson(manifestPath, manifest);
+    ok(`已将 ${packageName} 的 workspace 依赖设为 *`);
+    changed = true;
+  } else {
+    info(`${MATERIAL_PACKAGE_JSON} 已包含 ${packageName} 的 workspace:* 依赖，跳过`);
+  }
+
+  if (ensureBarrelExport(MATERIAL_BARREL, packageName, { cwd })) changed = true;
+  return changed;
 }
 
 // 从已有包的 name 推断 npm scope，例如 @xzy18
@@ -194,6 +260,9 @@ function linkAliases(pkgName, dirName, { cwd = process.cwd() } = {}) {
 }
 
 module.exports = {
+  MATERIAL_COMPONENTS_DIR,
+  MATERIAL_BARREL,
+  MATERIAL_PACKAGE_JSON,
   log,
   info,
   ok,
@@ -205,6 +274,8 @@ module.exports = {
   fileExists,
   writeFile,
   appendExport,
+  ensureBarrelExport,
+  syncMaterialPackage,
   detectScope,
   nextDocOrder,
   linkAliases,

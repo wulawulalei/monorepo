@@ -5,7 +5,8 @@ const naming = require('../naming.cjs');
 const templates = require('../templates.cjs');
 const utils = require('../utils.cjs');
 
-const describe = 'pnpm gen package <name> [--scope @xzy18] [--description "..."] [--force]';
+const describe =
+  'pnpm gen package <name> [--scope @xzy18] [--description "..."] [--no-material] [--force]';
 
 // 生成新包骨架，并把包名注册进 tsconfig paths 与 dumi alias
 function run({ positionals, flags }, { cwd }) {
@@ -43,6 +44,11 @@ function run({ positionals, flags }, { cwd }) {
   }
 
   utils.linkAliases(packageName, dirName, { cwd });
+  if (flags['no-material']) {
+    utils.info('已跳过 material-components 聚合（--no-material）');
+  } else {
+    utils.syncMaterialPackage(packageName, { cwd });
+  }
   utils.log('');
   utils.info(`pnpm-workspace.yaml 使用 packages/* 通配，无需改动；在 ${packageDir}/src/index.ts 导出 API 后即可 pnpm build。`);
   utils.info('发布前记得创建 changeset：pnpm changeset');
