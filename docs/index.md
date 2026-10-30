@@ -30,6 +30,6 @@ features:
 footer: Open-source MIT Licensed | © 2026-present
 ---
 
-`xzy-materials` 是一个由 pnpm + Turborepo 管理的物料 monorepo，按能力拆分为 `@xzy18/components`、`@xzy18/hooks`、`@xzy18/utils` 三个包，均可独立安装与发布、按需引入。
+`xzy-materials` 是一个由 pnpm + Turborepo 管理的物料 monorepo，按能力拆分为 `@xzy18/components`、`@xzy18/hooks`、`@xzy18/utils` 三个包，均可独立安装与发布、按需引入；也可以安装 `@xzy18/material-components` 统一入口，一次引入全部运行时物料。
 
 想了解目录结构、构建与发布流程，请看 [快速开始](/docs)；想看当前提供了哪些组件，直接前往 [组件总览](/components)。

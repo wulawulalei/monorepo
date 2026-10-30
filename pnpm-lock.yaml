@@ -152,6 +152,40 @@ importers:
         specifier: ^5.6.3
         version: 5.9.3
 
+  packages/material-components:
+    dependencies:
+      '@xzy18/components':
+        specifier: workspace:*
+        version: link:../components
+      '@xzy18/hooks':
+        specifier: workspace:*
+        version: link:../hooks
+      '@xzy18/utils':
+        specifier: workspace:*
+        version: link:../utils
+      antd:
+        specifier: ^5.20.0
+        version: 5.29.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react:
+        specifier: ^18.2.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.3.1(react@18.3.1)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.3.12
+        version: 18.3.27
+      '@types/react-dom':
+        specifier: ^18.3.1
+        version: 18.3.7(@types/react@18.3.27)
+      father:
+        specifier: ^4.6.8
+        version: 4.6.8(@babel/core@7.28.5)(@types/node@20.19.25)(@types/webpack@5.28.5)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(type-fest@4.41.0)(webpack@5.102.1)
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+
   packages/utils:
     devDependencies:
       father:

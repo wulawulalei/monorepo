@@ -55,10 +55,16 @@ Lerna 解决的是三件事：多包依赖安装（`bootstrap`）、统一版本
 
 ### 如何新增一个包？
 
-推荐直接用生成器，它会创建 `package.json`、`.fatherrc.ts`、`src/index.ts`，并把新包注册进 `tsconfig.json` 的 `paths` 和 `.dumirc.ts` 的 `alias`：
+推荐直接用生成器，它会创建 `package.json`、`.fatherrc.ts`、`src/index.ts`，把新包注册进 `tsconfig.json` 的 `paths`、`.dumirc.ts` 的 `alias`，并默认加入 `@xzy18/material-components` 的依赖与统一出口：
 
 ```shell
 $ pnpm gen package icons
+```
+
+配置、CLI 等不应该暴露给组件使用方的包，通过 `--no-material` 跳过聚合：
+
+```shell
+$ pnpm gen package config --no-material
 ```
 
 也可以手工创建，步骤如下：
@@ -78,9 +84,9 @@ $ pnpm gen package icons
 $ pnpm gen component ProTable --title "高级表格"
 ```
 
-它会创建 `packages/components/src/ProTable/{index.tsx,index.md}`，并把 `export { ProTable } from "./ProTable";` 追加到 `packages/components/src/index.ts`。文档 `order` 会自动取同级最大值 +1，`group` 默认 «基础»（可用 `--group` 覆盖）。若目标文件已存在，脚本会报错退出，确认覆盖请追加 `--force`。
+它会创建 `packages/components/src/ProTable/{index.tsx,index.md}`，把 `export { ProTable } from "./ProTable";` 追加到 `packages/components/src/index.ts`，并确保 `@xzy18/material-components` 继续转导出组件包。文档示例默认从统一入口引入，`order` 会自动取同级最大值 +1，`group` 默认 «基础»（可用 `--group` 覆盖）。若目标文件已存在，脚本会报错退出，确认覆盖请追加 `--force`。
 
-同理还有 `pnpm gen hook useLoading`（hooks 包，结构与组件一致，同时产出 `index.ts` 与 `index.md`，文档路由为 `/hooks/*`）和 `pnpm gen package icons`（新包，会自动注册 `tsconfig.json` 的 `paths` 与 `.dumirc.ts` 的 `alias`）。不带参数执行 `pnpm gen` 可查看全部用法。
+同理还有 `pnpm gen hook useLoading`（hooks 包，结构与组件一致，同时产出 `index.ts` 与 `index.md`，文档路由为 `/hooks/*`）和 `pnpm gen package icons`（新包，会自动注册依赖、统一出口、`tsconfig.json` 的 `paths` 与 `.dumirc.ts` 的 `alias`）。不带参数执行 `pnpm gen` 可查看全部用法。
 
 ### 新增组件后为什么文档里看不到它？
 
@@ -157,6 +163,8 @@ $ pnpm release            # 版本、构建、发布并推送 tag
 发布脚本要求工作区干净。`master` 只能发布正式包并部署文档，`test` 只能发布 alpha 包且不更新正式文档。发布成功后会提交版本改动并推送包级 tag。
 
 alpha 发布需切换到 `test` 分支，运行 `pnpm alpha:enter` 并创建 changeset，再运行 `pnpm release`。全部 alpha 版本完成后运行 `pnpm alpha:exit`。
+
+`material-components` 通过 `workspace:*` 依赖运行时子包。任一子包升版后，已不在原精确版本范围内，Changesets 会按默认策略自动为聚合包补一个 patch。因此只需要给实际改动的子包创建 changeset，不需要再手写一份 `material-components` 的 changeset。
 
 ### 变更日志如何生成？
 

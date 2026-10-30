@@ -38,5 +38,9 @@ export default defineConfig({
     "@xzy18/components": resolve(__dirname, "packages/components/src"),
     "@xzy18/hooks": resolve(__dirname, "packages/hooks/src"),
     "@xzy18/utils": resolve(__dirname, "packages/utils/src"),
+    "@xzy18/material-components": resolve(
+      __dirname,
+      "packages/material-components/src",
+    ),
   },
 });
