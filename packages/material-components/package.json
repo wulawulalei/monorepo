@@ -1,0 +1,39 @@
+{
+  "name": "@xzy18/material-components",
+  "version": "1.0.0",
+  "private": false,
+  "description": "Unified runtime materials for the xzy-materials ecosystem",
+  "license": "MIT",
+  "module": "es/index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "dist",
+    "es"
+  ],
+  "scripts": {
+    "build": "father build",
+    "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "@xzy18/components": "workspace:*",
+    "@xzy18/hooks": "workspace:*",
+    "@xzy18/utils": "workspace:*"
+  },
+  "peerDependencies": {
+    "antd": "^5.20.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "father": "^4.6.8",
+    "typescript": "^5.6.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false
+}

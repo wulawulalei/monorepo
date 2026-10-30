@@ -15,7 +15,8 @@
     "paths": {
       "@xzy18/components": ["packages/components/src"],
       "@xzy18/hooks": ["packages/hooks/src"],
-      "@xzy18/utils": ["packages/utils/src"]
+      "@xzy18/utils": ["packages/utils/src"],
+      "@xzy18/material-components": ["packages/material-components/src"]
     },
     "types": ["node", "react", "react-dom"]
   },
