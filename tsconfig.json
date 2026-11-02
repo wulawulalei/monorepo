@@ -26,5 +26,5 @@
       "@testing-library/jest-dom"
     ]
   },
-  "include": ["packages/*/src", "docs", ".dumirc.ts"]
+  "include": ["packages/*/src", "docs", ".dumirc.ts", "scripts/**/*.ts"]
 }

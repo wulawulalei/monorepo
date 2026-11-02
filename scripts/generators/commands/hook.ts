@@ -1,9 +1,8 @@
-'use strict';
-
-const path = require('path');
-const naming = require('../naming.cjs');
-const templates = require('../templates.cjs');
-const utils = require('../utils.cjs');
+import path from 'node:path';
+import * as naming from '../naming';
+import * as templates from '../templates';
+import type { GeneratorArgs, GeneratorContext } from '../types';
+import * as utils from '../utils';
 
 // hooks 包源码目录
 const HOOKS_DIR = 'packages/hooks/src';
@@ -14,7 +13,10 @@ const describe =
   'pnpm gen hook <name> [--title "中文名"] [--group 状态] [--force]';
 
 // 生成 hook 目录（与组件保持一致：文件夹 + index.ts + index.md），并把导出追加到 hooks 包入口
-function run({ positionals, flags }, { cwd }) {
+function run(
+  { positionals, flags }: GeneratorArgs,
+  { cwd }: GeneratorContext,
+): number {
   const name = naming.toHookName(positionals[0]);
   if (!name) {
     utils.fail('缺少 hook 名，例如：pnpm gen hook useLoading');
@@ -29,12 +31,23 @@ function run({ positionals, flags }, { cwd }) {
   const hooksPkg = utils.readJson(
     path.resolve(cwd, 'packages/hooks/package.json'),
   );
-  const importName = hooksPkg && hooksPkg.name ? hooksPkg.name : '@xzy18/hooks';
+  const importName =
+    hooksPkg &&
+    typeof hooksPkg === 'object' &&
+    'name' in hooksPkg &&
+    typeof hooksPkg.name === 'string'
+      ? hooksPkg.name
+      : '@xzy18/hooks';
   const materialPkg = utils.readJson(
     path.resolve(cwd, utils.MATERIAL_PACKAGE_JSON),
   );
   const docImportName =
-    materialPkg && materialPkg.name ? materialPkg.name : importName;
+    materialPkg &&
+    typeof materialPkg === 'object' &&
+    'name' in materialPkg &&
+    typeof materialPkg.name === 'string'
+      ? materialPkg.name
+      : importName;
 
   utils.info(`生成 hook ${name}（分组 ${group}，order ${order}）`);
   try {
@@ -42,7 +55,7 @@ function run({ positionals, flags }, { cwd }) {
       path.join(HOOKS_DIR, name, 'index.ts'),
       templates.hookSource(name),
       {
-        force: flags.force,
+        force: Boolean(flags.force),
         cwd,
       },
     );
@@ -55,10 +68,10 @@ function run({ positionals, flags }, { cwd }) {
         order,
         importName: docImportName,
       }),
-      { force: flags.force, cwd },
+      { force: Boolean(flags.force), cwd },
     );
   } catch (error) {
-    utils.fail(error.message);
+    utils.fail(error instanceof Error ? error.message : String(error));
     return 1;
   }
 
@@ -77,4 +90,4 @@ function run({ positionals, flags }, { cwd }) {
   return 0;
 }
 
-module.exports = { run, describe };
+export { describe, run };

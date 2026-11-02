@@ -1,22 +1,23 @@
-#!/usr/bin/env node
-'use strict';
+import path from 'node:path';
+import * as component from './commands/component';
+import * as hook from './commands/hook';
+import * as packageCommand from './commands/package';
+import type { GeneratorArgs, GeneratorCommand, GeneratorFlags } from './types';
+import * as utils from './utils';
 
-const path = require('path');
-const utils = require('./utils.cjs');
-
-const COMMANDS = {
-  component: require('./commands/component.cjs'),
-  hook: require('./commands/hook.cjs'),
-  package: require('./commands/package.cjs'),
+const COMMANDS: Record<string, GeneratorCommand> = {
+  component,
+  hook,
+  package: packageCommand,
 };
 
 // 脚本位于 <root>/scripts/generators/，以仓库根为工作目录，保证任意位置执行都一致
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 
 // 解析 CLI 参数：支持 --key value、--key=value、--flag 三种写法
-function parseArgv(argv) {
-  const positionals = [];
-  const flags = {};
+function parseArgv(argv: string[]): GeneratorArgs {
+  const positionals: string[] = [];
+  const flags: GeneratorFlags = {};
   for (let i = 0; i < argv.length; i += 1) {
     const token = argv[i];
     if (!token.startsWith('--')) {
@@ -41,7 +42,7 @@ function parseArgv(argv) {
 }
 
 // 打印可用命令与示例
-function printHelp() {
+function printHelp(): void {
   utils.log('xzy-materials 代码生成器');
   utils.log('');
   utils.log('用法：');
@@ -57,7 +58,7 @@ function printHelp() {
 }
 
 // 入口：解析参数并分发子命令，返回值作为进程退出码
-function main() {
+function main(): number {
   const { positionals, flags } = parseArgv(process.argv.slice(2));
   const commandName = positionals.shift();
 
@@ -82,7 +83,7 @@ function main() {
       { cwd: REPO_ROOT, root: REPO_ROOT },
     );
   } catch (error) {
-    utils.fail(error.message);
+    utils.fail(error instanceof Error ? error.message : String(error));
     return 1;
   }
 }

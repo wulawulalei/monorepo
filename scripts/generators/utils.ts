@@ -1,7 +1,14 @@
-'use strict';
+import fs from 'node:fs';
+import path from 'node:path';
 
-const fs = require('fs');
-const path = require('path');
+interface PackageManifest {
+  name?: string;
+  dependencies?: Record<string, string>;
+}
+
+interface WorkspaceOptions {
+  cwd?: string;
+}
 
 // 统一运行时入口，组件、Hook 与新包生成后默认同步到这里
 const MATERIAL_COMPONENTS_DIR = 'packages/material-components';
@@ -9,7 +16,7 @@ const MATERIAL_BARREL = `${MATERIAL_COMPONENTS_DIR}/src/index.ts`;
 const MATERIAL_PACKAGE_JSON = `${MATERIAL_COMPONENTS_DIR}/package.json`;
 
 const ESC = '\x1b[';
-const style = {
+const style: Record<'reset' | 'red' | 'green' | 'yellow' | 'cyan', string> = {
   reset: `${ESC}0m`,
   red: `${ESC}31m`,
   green: `${ESC}32m`,
@@ -18,65 +25,71 @@ const style = {
 };
 
 // 普通输出（stdout）
-function log(message = '') {
+function log(message = ''): void {
   process.stdout.write(`${message}\n`);
 }
 
 // 信息提示
-function info(message) {
+function info(message: string): void {
   log(`${style.cyan}i${style.reset} ${message}`);
 }
 
 // 成功提示
-function ok(message) {
+function ok(message: string): void {
   log(`${style.green}v${style.reset} ${message}`);
 }
 
 // 警告：不阻断流程，仅提示人工确认
-function warn(message) {
+function warn(message: string): void {
   log(`${style.yellow}!${style.reset} ${message}`);
 }
 
 // 错误输出（stderr，便于 CI 区分）
-function fail(message) {
+function fail(message: string): void {
   process.stderr.write(`${style.red}x${style.reset} ${message}\n`);
 }
 
 // 统一输出 posix 分隔符，保证 macOS / Windows 打印一致
-function toPosix(target) {
+function toPosix(target: string): string {
   return target.split(path.sep).join('/');
 }
 
 // 相对仓库根的可读路径，用于日志展示
-function relative(cwd, target) {
+function relative(cwd: string, target: string): string {
   return toPosix(path.relative(cwd, target));
 }
 
 // 读取并解析 JSON；解析失败返回 null 而不抛错，交给调用方降级处理
-function readJson(filePath) {
+function readJson<T = unknown>(filePath: string): T | null {
   try {
-    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    return JSON.parse(fs.readFileSync(filePath, 'utf8')) as T;
   } catch {
     return null;
   }
 }
 
 // 以仓库统一的格式写入 JSON，供包入口配置自动维护
-function writeJson(absolute, value) {
+function writeJson(absolute: string, value: unknown): void {
   fs.writeFileSync(absolute, `${JSON.stringify(value, null, 2)}\n`);
 }
 
 // 判断相对路径是否存在（相对于 cwd）
-function fileExists(relativePath, { cwd = process.cwd() } = {}) {
+function fileExists(
+  relativePath: string,
+  { cwd = process.cwd() }: WorkspaceOptions = {},
+): boolean {
   return fs.existsSync(path.resolve(cwd, relativePath));
 }
 
 // 写入文件（必要时递归建目录）；已存在且未加 --force 时报错，避免误覆盖
 function writeFile(
-  relativePath,
-  content,
-  { force = false, cwd = process.cwd() } = {},
-) {
+  relativePath: string,
+  content: string,
+  {
+    force = false,
+    cwd = process.cwd(),
+  }: WorkspaceOptions & { force?: boolean } = {},
+): string {
   const absolute = path.resolve(cwd, relativePath);
   if (fs.existsSync(absolute) && !force) {
     throw new Error(
@@ -91,11 +104,11 @@ function writeFile(
 
 // 在包入口文件末尾追加一条导出；已存在则跳过，保证脚本可重复执行
 function appendExport(
-  relativeBarrel,
-  exportName,
-  source,
-  { cwd = process.cwd() } = {},
-) {
+  relativeBarrel: string,
+  exportName: string,
+  source: string,
+  { cwd = process.cwd() }: WorkspaceOptions = {},
+): boolean {
   const absolute = path.resolve(cwd, relativeBarrel);
   const line = `export { ${exportName} } from "${source}";`;
   if (!fs.existsSync(absolute)) {
@@ -114,10 +127,10 @@ function appendExport(
 
 // 确保统一入口转导出指定子包；export * 会自动覆盖该包后续新增的成员
 function ensureBarrelExport(
-  relativeBarrel,
-  packageName,
-  { cwd = process.cwd() } = {},
-) {
+  relativeBarrel: string,
+  packageName: string,
+  { cwd = process.cwd() }: WorkspaceOptions = {},
+): boolean {
   const absolute = path.resolve(cwd, relativeBarrel);
   if (!fs.existsSync(absolute)) {
     warn(
@@ -144,14 +157,17 @@ function ensureBarrelExport(
 }
 
 // 将运行时包加入 material-components 的依赖与统一入口
-function syncMaterialPackage(packageName, { cwd = process.cwd() } = {}) {
+function syncMaterialPackage(
+  packageName: string,
+  { cwd = process.cwd() }: WorkspaceOptions = {},
+): boolean {
   const manifestPath = path.resolve(cwd, MATERIAL_PACKAGE_JSON);
   if (!fs.existsSync(manifestPath)) {
     warn(`未找到 ${MATERIAL_PACKAGE_JSON}，跳过 material-components 聚合`);
     return false;
   }
 
-  const manifest = readJson(manifestPath);
+  const manifest = readJson<PackageManifest>(manifestPath);
   if (!manifest || typeof manifest !== 'object') {
     warn(`${MATERIAL_PACKAGE_JSON} 无法解析，跳过 material-components 聚合`);
     return false;
@@ -177,12 +193,17 @@ function syncMaterialPackage(packageName, { cwd = process.cwd() } = {}) {
 }
 
 // 从已有包的 name 推断 npm scope，例如 @xzy18
-function detectScope(packagesDir, { cwd = process.cwd() } = {}) {
+function detectScope(
+  packagesDir: string,
+  { cwd = process.cwd() }: WorkspaceOptions = {},
+): string | null {
   const absolute = path.resolve(cwd, packagesDir);
   if (!fs.existsSync(absolute)) return null;
   for (const entry of fs.readdirSync(absolute, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue;
-    const pkg = readJson(path.join(absolute, entry.name, 'package.json'));
+    const pkg = readJson<PackageManifest>(
+      path.join(absolute, entry.name, 'package.json'),
+    );
     const match =
       pkg && typeof pkg.name === 'string'
         ? pkg.name.match(/^(@[^/]+)\//)
@@ -193,7 +214,10 @@ function detectScope(packagesDir, { cwd = process.cwd() } = {}) {
 }
 
 // 扫描目标目录下各子目录的 index.md，取其中最大的 order + 1，让新增条目默认排在最后
-function nextDocOrder(docDir, { cwd = process.cwd() } = {}) {
+function nextDocOrder(
+  docDir: string,
+  { cwd = process.cwd() }: WorkspaceOptions = {},
+): number {
   const absolute = path.resolve(cwd, docDir);
   let max = 0;
   if (fs.existsSync(absolute)) {
@@ -214,7 +238,7 @@ const PATHS_ENTRY = /^(\s*)"(@[^"]+)":\s*\["packages\/([^"]+)\/src"\](,?)\s*$/;
 const ALIAS_ENTRY_START = /^(\s*)(['"])(@[^'"]+)\2\s*:\s*resolve\(/;
 
 // 扫描 resolve( 的括号层级，兼容单行和 Prettier 拆分后的多行 alias。
-function findCallEndIndex(lines, startIndex) {
+function findCallEndIndex(lines: string[], startIndex: number): number {
   let depth = 0;
   let started = false;
 
@@ -234,7 +258,7 @@ function findCallEndIndex(lines, startIndex) {
 }
 
 // 扫描对象的大括号层级，确定 alias 配置块的结束位置。
-function findObjectEndIndex(lines, startIndex) {
+function findObjectEndIndex(lines: string[], startIndex: number): number {
   let depth = 0;
   let started = false;
 
@@ -254,7 +278,7 @@ function findObjectEndIndex(lines, startIndex) {
 }
 
 // 返回最后一个匹配的行号；找不到返回 -1
-function findLastEntryIndex(lines, pattern) {
+function findLastEntryIndex(lines: string[], pattern: RegExp): number {
   let index = -1;
   lines.forEach((line, i) => {
     if (pattern.test(line)) index = i;
@@ -263,7 +287,11 @@ function findLastEntryIndex(lines, pattern) {
 }
 
 // tsconfig.json 是严格 JSON，插入点要处理末行逗号，并在写盘前用 JSON.parse 校验
-function linkTsconfigPaths(pkgName, dirName, { cwd = process.cwd() } = {}) {
+function linkTsconfigPaths(
+  pkgName: string,
+  dirName: string,
+  { cwd = process.cwd() }: WorkspaceOptions = {},
+): void {
   const absolute = path.resolve(cwd, 'tsconfig.json');
   if (!fs.existsSync(absolute)) {
     warn('未找到 tsconfig.json，跳过 paths 注入');
@@ -282,7 +310,9 @@ function linkTsconfigPaths(pkgName, dirName, { cwd = process.cwd() } = {}) {
     );
     return;
   }
-  const indent = lines[index].match(PATHS_ENTRY)[1];
+  const entryMatch = lines[index].match(PATHS_ENTRY);
+  if (!entryMatch) return;
+  const indent = entryMatch[1];
   lines[index] = `${lines[index].replace(/,\s*$/, '')},`;
   lines.splice(
     index + 1,
@@ -300,7 +330,11 @@ function linkTsconfigPaths(pkgName, dirName, { cwd = process.cwd() } = {}) {
   ok(`更新 tsconfig.json -> "${pkgName}": ["packages/${dirName}/src"]`);
 }
 
-function linkDumircAlias(pkgName, dirName, { cwd = process.cwd() } = {}) {
+function linkDumircAlias(
+  pkgName: string,
+  dirName: string,
+  { cwd = process.cwd() }: WorkspaceOptions = {},
+): void {
   const absolute = path.resolve(cwd, '.dumirc.ts');
   if (!fs.existsSync(absolute)) {
     warn('未找到 .dumirc.ts，跳过 alias 注入');
@@ -350,29 +384,33 @@ function linkDumircAlias(pkgName, dirName, { cwd = process.cwd() } = {}) {
 }
 
 // 为新包补 tsconfig paths 与 dumi alias；锚点缺失时降级为提示，不阻断生成
-function linkAliases(pkgName, dirName, { cwd = process.cwd() } = {}) {
+function linkAliases(
+  pkgName: string,
+  dirName: string,
+  { cwd = process.cwd() }: WorkspaceOptions = {},
+): void {
   linkTsconfigPaths(pkgName, dirName, { cwd });
   linkDumircAlias(pkgName, dirName, { cwd });
 }
 
-module.exports = {
-  MATERIAL_COMPONENTS_DIR,
+export {
   MATERIAL_BARREL,
+  MATERIAL_COMPONENTS_DIR,
   MATERIAL_PACKAGE_JSON,
-  log,
-  info,
-  ok,
-  warn,
-  fail,
-  toPosix,
-  relative,
-  readJson,
-  fileExists,
-  writeFile,
   appendExport,
-  ensureBarrelExport,
-  syncMaterialPackage,
   detectScope,
-  nextDocOrder,
+  ensureBarrelExport,
+  fail,
+  fileExists,
+  info,
   linkAliases,
+  log,
+  nextDocOrder,
+  ok,
+  readJson,
+  relative,
+  syncMaterialPackage,
+  toPosix,
+  warn,
+  writeFile,
 };

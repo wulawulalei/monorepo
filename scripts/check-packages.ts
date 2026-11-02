@@ -1,16 +1,53 @@
-#!/usr/bin/env node
-'use strict';
+import { execFileSync } from 'node:child_process';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 
-const fs = require('node:fs');
-const os = require('node:os');
-const path = require('node:path');
-const { execFileSync } = require('node:child_process');
+interface PackageManifest {
+  name: string;
+  version: string;
+  private?: boolean;
+  type?: string;
+  dependencies?: Record<string, string>;
+  optionalDependencies?: Record<string, string>;
+  peerDependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+  exports?: Record<string, ExportTarget | string>;
+  main?: string;
+  module?: string;
+  types?: string;
+}
+
+interface ExportTarget {
+  import?: { types?: string; default?: string };
+  require?: { types?: string; default?: string };
+  types?: string;
+  default?: string;
+}
+
+interface EsmPackageManifest {
+  type?: string;
+}
+
+interface PackageItem {
+  dir: string;
+  dirName: string;
+  manifest: PackageManifest;
+  tarball?: string;
+  packedManifest?: PackageManifest;
+}
+
+interface RunOptions {
+  cwd?: string;
+  stdio?: ('ignore' | 'pipe' | 'inherit')[];
+  env?: Record<string, string>;
+}
 
 const repoRoot = path.resolve(__dirname, '..');
 const packagesDir = path.join(repoRoot, 'packages');
 const pnpm = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
 
-const expectedExports = {
+const expectedExports: Record<string, string[]> = {
   '@xzy18/components': ['AntdProvider', 'Button'],
   '@xzy18/config': ['eslint', 'prettier'],
   '@xzy18/hooks': ['useBoolean', 'useDebouncedValue'],
@@ -25,7 +62,11 @@ const expectedExports = {
   '@xzy18/utils': ['clamp', 'cx'],
 };
 
-function run(command, args, options = {}) {
+function run(
+  command: string,
+  args: string[],
+  options: RunOptions = {},
+): string {
   try {
     return execFileSync(command, args, {
       cwd: options.cwd || repoRoot,
@@ -33,7 +74,11 @@ function run(command, args, options = {}) {
       stdio: options.stdio || ['ignore', 'pipe', 'pipe'],
       env: { ...process.env, ...options.env },
     });
-  } catch (error) {
+  } catch (caughtError) {
+    const error = caughtError as Error & {
+      stdout?: Buffer | string;
+      stderr?: Buffer | string;
+    };
     // execFileSync 默认只把退出码放进 message，补充命令输出才能定位失败。
     const commandOutput = [error.stdout, error.stderr]
       .filter(Boolean)
@@ -47,17 +92,21 @@ function run(command, args, options = {}) {
   }
 }
 
-function readJson(filePath) {
-  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+function readJson<T = unknown>(filePath: string): T {
+  return JSON.parse(fs.readFileSync(filePath, 'utf8')) as T;
 }
 
-function assert(condition, message) {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) {
     throw new Error(message);
   }
 }
 
-function linkDependency(searchDirs, dependencyName, consumerModules) {
+function linkDependency(
+  searchDirs: string[],
+  dependencyName: string,
+  consumerModules: string,
+): void {
   const destination = path.join(consumerModules, dependencyName);
   if (fs.existsSync(destination)) {
     return;
@@ -76,13 +125,13 @@ function linkDependency(searchDirs, dependencyName, consumerModules) {
   );
 }
 
-function readTarJson(tarball, filePath) {
+function readTarJson<T = unknown>(tarball: string, filePath: string): T {
   return JSON.parse(
     run('tar', ['-xOf', tarball, `package/${filePath}`]).trim(),
-  );
+  ) as T;
 }
 
-function listPackages() {
+function listPackages(): PackageItem[] {
   return fs
     .readdirSync(packagesDir, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
@@ -93,7 +142,7 @@ function listPackages() {
         return null;
       }
 
-      const manifest = readJson(manifestPath);
+      const manifest = readJson<PackageManifest>(manifestPath);
       return manifest.private
         ? null
         : {
@@ -102,13 +151,13 @@ function listPackages() {
             manifest,
           };
     })
-    .filter(Boolean)
+    .filter((item): item is PackageItem => item !== null)
     .sort((left, right) =>
       left.manifest.name.localeCompare(right.manifest.name),
     );
 }
 
-function prepareConsumer(packages, consumerDir) {
+function prepareConsumer(packages: PackageItem[], consumerDir: string): void {
   const consumerModules = path.join(consumerDir, 'node_modules');
   fs.mkdirSync(consumerModules, { recursive: true });
   fs.writeFileSync(
@@ -135,6 +184,7 @@ function prepareConsumer(packages, consumerDir) {
   for (const item of packages) {
     const target = path.join(consumerModules, item.manifest.name);
     fs.mkdirSync(target, { recursive: true });
+    assert(item.tarball, `${item.manifest.name} 尚未打包`);
     run('tar', ['-xzf', item.tarball, '-C', target, '--strip-components=1']);
   }
 
@@ -153,13 +203,17 @@ function prepareConsumer(packages, consumerDir) {
   }
 }
 
-function assertExportTarget(files, target, label) {
+function assertExportTarget(
+  files: Set<string>,
+  target: string | undefined,
+  label: string,
+): void {
   assert(typeof target === 'string', `${label} 必须指向一个字符串路径`);
   const normalized = target.replace(/^\.\//, '');
   assert(files.has(normalized), `${label} 指向不存在的文件 ${target}`);
 }
 
-function verifyEsmSpecifiers(item, files) {
+function verifyEsmSpecifiers(item: PackageItem, files: Set<string>): void {
   const esmFiles = [...files].filter(
     (file) => file.startsWith('es/') && /\.(?:js|mjs|d\.ts)$/.test(file),
   );
@@ -167,6 +221,7 @@ function verifyEsmSpecifiers(item, files) {
     /\b(?:from\s*|import\s*\(?\s*)['"](\.[^'"]+)['"]/g;
 
   for (const file of esmFiles) {
+    assert(item.tarball, `${item.manifest.name} 尚未打包`);
     const source = run('tar', ['-xOf', item.tarball, `package/${file}`]);
 
     for (const match of source.matchAll(relativeSpecifierPattern)) {
@@ -187,8 +242,9 @@ function verifyEsmSpecifiers(item, files) {
   }
 }
 
-function verifyManifest(item, files) {
+function verifyManifest(item: PackageItem, files: Set<string>): void {
   const { manifest, packedManifest } = item;
+  assert(packedManifest, `${manifest.name} 缺少打包后的 package.json`);
 
   assert(
     packedManifest.name === manifest.name,
@@ -226,7 +282,12 @@ function verifyManifest(item, files) {
     `${manifest.name} 缺少条件导出 "."`,
   );
 
-  if (rootExport.import && rootExport.require) {
+  if (
+    rootExport.import &&
+    rootExport.require &&
+    rootExport.import.default &&
+    rootExport.require.default
+  ) {
     assert(
       rootExport.import.default && rootExport.require.default,
       `${manifest.name} 必须同时提供 import 与 require 条件`,
@@ -264,21 +325,24 @@ function verifyManifest(item, files) {
         `${manifest.name} 的 module 与 import 条件不一致`,
       );
     }
-    if (packedManifest.types) {
+    if (packedManifest.types && rootExport.require.types) {
       assert(
         packedManifest.types === rootExport.require.types.replace(/^\.\//, ''),
         `${manifest.name} 的 types 与 require.types 不一致`,
       );
     }
-    if (rootExport.import.types.endsWith('.d.mts')) {
+    if (rootExport.import.types?.endsWith('.d.mts')) {
       assert(
-        rootExport.require.types.endsWith('.d.ts'),
+        rootExport.require.types?.endsWith('.d.ts'),
         `${manifest.name} 必须为 ESM 与 CommonJS 分别提供声明文件`,
       );
     }
 
     if (packedManifest.module?.startsWith('./es/')) {
-      const esmPackage = readTarJson(item.tarball, 'es/package.json');
+      const esmPackage = readTarJson<EsmPackageManifest>(
+        item.tarball,
+        'es/package.json',
+      );
       assert(
         esmPackage.type === 'module',
         `${manifest.name} 的 es/package.json 必须声明 type: module`,
@@ -316,11 +380,12 @@ function verifyManifest(item, files) {
   verifyEsmSpecifiers(item, files);
 }
 
-function runPublint(item) {
+function runPublint(item: PackageItem): void {
+  assert(item.tarball, `${item.manifest.name} 尚未打包`);
   run(pnpm, ['exec', 'publint', 'run', item.tarball, '--strict']);
 }
 
-function runRuntimeChecks(packages, consumerDir) {
+function runRuntimeChecks(packages: PackageItem[], consumerDir: string): void {
   const exportsByPackage = Object.fromEntries(
     packages.map((item) => [
       item.manifest.name,
@@ -363,7 +428,7 @@ for (const [name, keys] of Object.entries(expected)) {
   run(process.execPath, [esmScript]);
 }
 
-function runTypeChecks(consumerDir) {
+function runTypeChecks(consumerDir: string): void {
   const source = `import {
   AntdProvider,
   Button,
@@ -434,7 +499,7 @@ void prettier;
   ]);
 }
 
-function main() {
+function main(): void {
   const packages = listPackages();
   assert(packages.length > 0, '没有找到可发布的包');
 
@@ -460,7 +525,10 @@ function main() {
       );
 
       item.tarball = path.join(packDir, tarballs[0]);
-      item.packedManifest = readTarJson(item.tarball, 'package.json');
+      item.packedManifest = readTarJson<PackageManifest>(
+        item.tarball,
+        'package.json',
+      );
       const files = new Set(
         run('tar', ['-tzf', item.tarball])
           .split('\n')
@@ -487,6 +555,8 @@ function main() {
 try {
   main();
 } catch (error) {
-  console.error(`发布包校验失败：${error.message}`);
+  console.error(
+    `发布包校验失败：${error instanceof Error ? error.message : String(error)}`,
+  );
   process.exit(1);
 }

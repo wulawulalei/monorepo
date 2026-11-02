@@ -1,7 +1,5 @@
-'use strict';
-
 // 组件源码模板：与 packages/components 现有风格保持一致，并预置中文备注供后续填充
-function componentIndex(name) {
+function componentIndex(name: string): string {
   return `import React, { ReactNode } from 'react';
 
 export type ${name}Props = {
@@ -21,7 +19,19 @@ export const ${name}: React.FC<${name}Props> = ({ children }) => {
 }
 
 // 组件文档模板：frontmatter 会被 dumi 解析成侧边栏分组与排序
-function componentDoc({ name, title, group, order, importName }) {
+function componentDoc({
+  name,
+  title,
+  group,
+  order,
+  importName,
+}: {
+  name: string;
+  title: string;
+  group: string;
+  order: number;
+  importName: string;
+}): string {
   return `---
 title: ${title}
 group:
@@ -46,7 +56,7 @@ export default () => <${name} />;
 }
 
 // hook 模板：写入 packages/hooks/src/<name>/index.ts，与组件的"文件夹 + index"结构保持一致
-function hookSource(name) {
+function hookSource(name: string): string {
   return `import { useCallback, useState } from 'react';
 
 /**
@@ -71,7 +81,19 @@ export function ${name}(initial = false) {
 
 // hook 文档模板：frontmatter 决定 dumi 侧边栏分组与排序，API 表格需手工维护
 // （dumi 的 atomId 只识别同名的 .tsx/.jsx，hook 是 .ts，无法自动生成 props 表）
-function hookDoc({ name, title, group, order, importName }) {
+function hookDoc({
+  name,
+  title,
+  group,
+  order,
+  importName,
+}: {
+  name: string;
+  title: string;
+  group: string;
+  order: number;
+  importName: string;
+}): string {
   return `---
 title: ${title}
 group:
@@ -104,7 +126,13 @@ export default () => {
 }
 
 // 新包 package.json 模板：字段与现有包保持一致（注意 files 只声明实际会产出的目录）
-function packageJson({ packageName, description }) {
+function packageJson({
+  packageName,
+  description,
+}: {
+  packageName: string;
+  description: string;
+}): string {
   const manifest = {
     name: packageName,
     version: '0.0.0',
@@ -131,7 +159,7 @@ function packageJson({ packageName, description }) {
     types: 'lib/index.d.ts',
     files: ['lib', 'es'],
     scripts: {
-      build: 'father build && node ../../scripts/postbuild.cjs',
+      build: 'father build && pnpm exec tsx ../../scripts/postbuild.ts',
       prepack: 'pnpm build',
     },
     devDependencies: {
@@ -146,7 +174,7 @@ function packageJson({ packageName, description }) {
 }
 
 // 新包 father 配置：仅继承仓库根配置，保持"配置只在根目录维护一份"
-function fatherRc() {
+function fatherRc(): string {
   return `import { defineConfig } from 'father';
 
 export default defineConfig({
@@ -156,7 +184,7 @@ export default defineConfig({
 }
 
 // 新包入口文件：只留注释与空导出，避免出现无意义的占位实现
-function packageIndex(name) {
+function packageIndex(name: string): string {
   return `// ${name} 的公共 API 出口
 //
 // 约定：
@@ -167,12 +195,12 @@ export {};
 `;
 }
 
-module.exports = {
-  componentIndex,
+export {
   componentDoc,
-  hookSource,
-  hookDoc,
-  packageJson,
+  componentIndex,
   fatherRc,
+  hookDoc,
+  hookSource,
   packageIndex,
+  packageJson,
 };
