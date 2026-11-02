@@ -1,9 +1,8 @@
-'use strict';
-
-const path = require('path');
-const naming = require('../naming.cjs');
-const templates = require('../templates.cjs');
-const utils = require('../utils.cjs');
+import path from 'node:path';
+import * as naming from '../naming';
+import * as templates from '../templates';
+import type { GeneratorArgs, GeneratorContext } from '../types';
+import * as utils from '../utils';
 
 // 组件源码目录：dumi 的 atomDirs 也指向这里，新增组件会自动进入文档
 const COMPONENTS_DIR = 'packages/components/src';
@@ -14,7 +13,10 @@ const describe =
   'pnpm gen component <Name> [--title "中文名"] [--group 基础] [--force]';
 
 // 生成组件源码 + 文档页，并把导出追加到组件包入口
-function run({ positionals, flags }, { cwd }) {
+function run(
+  { positionals, flags }: GeneratorArgs,
+  { cwd }: GeneratorContext,
+): number {
   const name = naming.toPascalCase(positionals[0]);
   if (!name) {
     utils.fail('缺少组件名，例如：pnpm gen component ProTable');
@@ -29,14 +31,22 @@ function run({ positionals, flags }, { cwd }) {
     path.resolve(cwd, 'packages/components/package.json'),
   );
   const importName =
-    componentsPkg && componentsPkg.name
+    componentsPkg &&
+    typeof componentsPkg === 'object' &&
+    'name' in componentsPkg &&
+    typeof componentsPkg.name === 'string'
       ? componentsPkg.name
       : '@xzy18/components';
   const materialPkg = utils.readJson(
     path.resolve(cwd, utils.MATERIAL_PACKAGE_JSON),
   );
   const docImportName =
-    materialPkg && materialPkg.name ? materialPkg.name : importName;
+    materialPkg &&
+    typeof materialPkg === 'object' &&
+    'name' in materialPkg &&
+    typeof materialPkg.name === 'string'
+      ? materialPkg.name
+      : importName;
 
   utils.info(`生成组件 ${name}（分组 ${group}，order ${order}）`);
   try {
@@ -44,7 +54,7 @@ function run({ positionals, flags }, { cwd }) {
       path.join(COMPONENTS_DIR, name, 'index.tsx'),
       templates.componentIndex(name),
       {
-        force: flags.force,
+        force: Boolean(flags.force),
         cwd,
       },
     );
@@ -57,10 +67,10 @@ function run({ positionals, flags }, { cwd }) {
         order,
         importName: docImportName,
       }),
-      { force: flags.force, cwd },
+      { force: Boolean(flags.force), cwd },
     );
   } catch (error) {
-    utils.fail(error.message);
+    utils.fail(error instanceof Error ? error.message : String(error));
     return 1;
   }
 
@@ -73,4 +83,4 @@ function run({ positionals, flags }, { cwd }) {
   return 0;
 }
 
-module.exports = { run, describe };
+export { describe, run };

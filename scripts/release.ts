@@ -1,12 +1,20 @@
-#!/usr/bin/env node
-const fs = require('node:fs');
-const path = require('node:path');
-const { execFileSync } = require('node:child_process');
+import { execFileSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+
+interface PreState {
+  mode?: string;
+  tag?: string;
+}
 
 const root = path.resolve(__dirname, '..');
 
 // 执行命令并将输出直接显示在终端。
-function run(command, args, env = {}) {
+function run(
+  command: string,
+  args: string[],
+  env: Record<string, string> = {},
+): void {
   execFileSync(command, args, {
     cwd: root,
     env: { ...process.env, ...env },
@@ -15,19 +23,19 @@ function run(command, args, env = {}) {
 }
 
 // 执行命令并返回去除首尾空白后的输出。
-function output(command, args) {
+function output(command: string, args: string[]): string {
   return execFileSync(command, args, {
     cwd: root,
     encoding: 'utf8',
   }).trim();
 }
 
-function git(args) {
+function git(args: string[]): string {
   return output('git', args);
 }
 
 // 检查分支、工作区、changeset 和预发布状态。
-function checkRelease() {
+function checkRelease(): { alpha: boolean; branch: string } {
   const branch = git(['branch', '--show-current']);
   if (branch !== 'master' && branch !== 'test') {
     throw new Error(
@@ -50,7 +58,7 @@ function checkRelease() {
 
   const preStatePath = path.join(root, '.changeset/pre.json');
   const preState = fs.existsSync(preStatePath)
-    ? JSON.parse(fs.readFileSync(preStatePath, 'utf8'))
+    ? (JSON.parse(fs.readFileSync(preStatePath, 'utf8')) as PreState)
     : null;
 
   if (alpha && (preState?.mode !== 'pre' || preState.tag !== 'alpha')) {
@@ -65,11 +73,11 @@ function checkRelease() {
   return { alpha, branch };
 }
 
-function getTags() {
+function getTags(): string[] {
   return git(['tag', '--list']).split('\n').filter(Boolean);
 }
 
-function main() {
+function main(): void {
   if (process.argv.length > 2) {
     throw new Error('release 命令不接受参数');
   }
@@ -139,6 +147,8 @@ function main() {
 try {
   main();
 } catch (error) {
-  console.error(`发布失败：${error.message}`);
+  console.error(
+    `发布失败：${error instanceof Error ? error.message : String(error)}`,
+  );
   process.exit(1);
 }

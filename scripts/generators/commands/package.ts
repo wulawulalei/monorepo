@@ -1,15 +1,17 @@
-'use strict';
-
-const path = require('path');
-const naming = require('../naming.cjs');
-const templates = require('../templates.cjs');
-const utils = require('../utils.cjs');
+import path from 'node:path';
+import * as naming from '../naming';
+import * as templates from '../templates';
+import type { GeneratorArgs, GeneratorContext } from '../types';
+import * as utils from '../utils';
 
 const describe =
   'pnpm gen package <name> [--scope @xzy18] [--description "..."] [--no-material] [--force]';
 
 // 生成新包骨架，并把包名注册进 tsconfig paths 与 dumi alias
-function run({ positionals, flags }, { cwd }) {
+function run(
+  { positionals, flags }: GeneratorArgs,
+  { cwd }: GeneratorContext,
+): number {
   const dirName = naming.toKebabCase(positionals[0]);
   if (!dirName) {
     utils.fail('缺少包名，例如：pnpm gen package icons');
@@ -37,23 +39,23 @@ function run({ positionals, flags }, { cwd }) {
     utils.writeFile(
       path.join(packageDir, 'package.json'),
       templates.packageJson({ packageName, description }),
-      { force: flags.force, cwd },
+      { force: Boolean(flags.force), cwd },
     );
     utils.writeFile(
       path.join(packageDir, '.fatherrc.ts'),
       templates.fatherRc(),
-      { force: flags.force, cwd },
+      { force: Boolean(flags.force), cwd },
     );
     utils.writeFile(
       path.join(packageDir, 'src/index.ts'),
       templates.packageIndex(packageName),
       {
-        force: flags.force,
+        force: Boolean(flags.force),
         cwd,
       },
     );
   } catch (error) {
-    utils.fail(error.message);
+    utils.fail(error instanceof Error ? error.message : String(error));
     return 1;
   }
 
@@ -71,4 +73,4 @@ function run({ positionals, flags }, { cwd }) {
   return 0;
 }
 
-module.exports = { run, describe };
+export { describe, run };

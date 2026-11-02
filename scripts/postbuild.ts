@@ -1,8 +1,17 @@
-#!/usr/bin/env node
-'use strict';
+import fs from 'node:fs';
+import path from 'node:path';
 
-const fs = require('node:fs');
-const path = require('node:path');
+interface PackageManifest {
+  name?: string;
+  version?: string;
+  private?: boolean;
+  type?: string;
+  exports?: Record<string, unknown>;
+  main?: string;
+  module?: string;
+  types?: string;
+  [key: string]: unknown;
+}
 
 const packageDir = path.resolve(process.argv[2] || process.cwd());
 const manifestPath = path.join(packageDir, 'package.json');
@@ -14,11 +23,13 @@ if (!fs.existsSync(manifestPath)) {
   process.exit(1);
 }
 
-const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+const manifest = JSON.parse(
+  fs.readFileSync(manifestPath, 'utf8'),
+) as PackageManifest;
 
 // father 的 ESM 产物会保留无后缀的相对导入，浏览器打包器能解析，
 // Node ESM 则要求明确文件或目录出口。这里在构建后统一补成 index.js。
-function normalizeEsmSpecifiers(source) {
+function normalizeEsmSpecifiers(source: string): string {
   return source.replace(
     /((?:from|import)\s*\(?\s*['"])(\.{1,2}\/[^'"]+)(['"])/g,
     (match, prefix, specifier, suffix) => {
@@ -34,7 +45,7 @@ function normalizeEsmSpecifiers(source) {
   );
 }
 
-function walkGeneratedFiles(directory) {
+function walkGeneratedFiles(directory: string): string[] {
   if (!fs.existsSync(directory)) {
     return [];
   }

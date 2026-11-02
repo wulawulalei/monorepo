@@ -5,7 +5,7 @@
       "dependsOn": ["^build"],
       "inputs": [
         "$TURBO_DEFAULT$",
-        "$TURBO_ROOT$/scripts/postbuild.cjs",
+        "$TURBO_ROOT$/scripts/postbuild.ts",
         "$TURBO_ROOT$/father.config.ts"
       ],
       "outputs": ["lib/**", "es/**"]

@@ -84,7 +84,7 @@ module.exports = [
     },
   },
   {
-    files: ['**/*.cjs', 'scripts/**/*.js', 'packages/config/**/*.js'],
+    files: ['**/*.cjs', 'packages/config/**/*.js'],
     languageOptions: {
       sourceType: 'commonjs',
     },

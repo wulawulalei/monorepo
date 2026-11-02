@@ -28,7 +28,7 @@
     "es"
   ],
   "scripts": {
-    "build": "father build && node ../../scripts/postbuild.cjs",
+    "build": "father build && pnpm exec tsx ../../scripts/postbuild.ts",
     "prepack": "pnpm build"
   },
   "dependencies": {
