@@ -41,7 +41,6 @@
     "@vitest/coverage-v8": "2.1.9",
     "@xzy18/config": "workspace:*",
     "antd": "^5.20.0",
-    "axe-core": "4.10.2",
     "conventional-changelog-cli": "^5.0.0",
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "dumi": "^2.4.14",
