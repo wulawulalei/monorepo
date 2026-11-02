@@ -68,12 +68,19 @@ function main() {
 
   const command = COMMANDS[commandName];
   if (!command) {
-    utils.fail(`未知命令 "${commandName}"，可用命令：${Object.keys(COMMANDS).join(' / ')}`);
+    utils.fail(
+      `未知命令 "${commandName}"，可用命令：${Object.keys(COMMANDS).join(
+        ' / ',
+      )}`,
+    );
     return 1;
   }
 
   try {
-    return command.run({ positionals, flags }, { cwd: REPO_ROOT, root: REPO_ROOT });
+    return command.run(
+      { positionals, flags },
+      { cwd: REPO_ROOT, root: REPO_ROOT },
+    );
   } catch (error) {
     utils.fail(error.message);
     return 1;

@@ -13,11 +13,11 @@ order: 2
 ## 代码演示
 
 ```tsx
-import React, { useState } from "react";
-import { useDebouncedValue } from "@xzy18/material-components";
+import React, { useState } from 'react';
+import { useDebouncedValue } from '@xzy18/material-components';
 
 export default () => {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState('');
   const debouncedValue = useDebouncedValue(value, 500);
 
   return (
@@ -42,13 +42,13 @@ const debouncedValue = useDebouncedValue(value, delay);
 
 ### 参数
 
-| 参数 | 说明 | 类型 | 默认值 |
-| --- | --- | --- | --- |
-| value | 需要防抖的值 | `T` | - |
-| delay | 延迟时间，单位为毫秒 | `number` | `200` |
+| 参数  | 说明                 | 类型     | 默认值 |
+| ----- | -------------------- | -------- | ------ |
+| value | 需要防抖的值         | `T`      | -      |
+| delay | 延迟时间，单位为毫秒 | `number` | `200`  |
 
 ### 返回值
 
-| 返回值 | 说明 | 类型 |
-| --- | --- | --- |
-| debouncedValue | 延迟更新后的值 | `T` |
+| 返回值         | 说明           | 类型 |
+| -------------- | -------------- | ---- |
+| debouncedValue | 延迟更新后的值 | `T`  |

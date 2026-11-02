@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react';
 
 export function useBoolean(initial = false) {
   const [value, setValue] = useState<boolean>(initial);

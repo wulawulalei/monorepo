@@ -1,5 +1,5 @@
-import React, { ReactNode } from "react";
-import { ConfigProvider, theme as antdTheme, ThemeConfig } from "antd";
+import { theme as antdTheme, ConfigProvider, ThemeConfig } from 'antd';
+import { ReactNode } from 'react';
 
 export type AntdProviderProps = {
   children: ReactNode;
@@ -10,14 +10,14 @@ export type AntdProviderProps = {
 export function AntdProvider({
   children,
   theme,
-  prefixCls = "df",
+  prefixCls = 'df',
 }: AntdProviderProps) {
   return (
     <ConfigProvider
       theme={{
         algorithm: antdTheme.defaultAlgorithm,
         token: {
-          colorPrimary: "#36aafd",
+          colorPrimary: '#36aafd',
         },
         ...theme,
       }}

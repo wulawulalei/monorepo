@@ -72,10 +72,16 @@ function fileExists(relativePath, { cwd = process.cwd() } = {}) {
 }
 
 // 写入文件（必要时递归建目录）；已存在且未加 --force 时报错，避免误覆盖
-function writeFile(relativePath, content, { force = false, cwd = process.cwd() } = {}) {
+function writeFile(
+  relativePath,
+  content,
+  { force = false, cwd = process.cwd() } = {},
+) {
   const absolute = path.resolve(cwd, relativePath);
   if (fs.existsSync(absolute) && !force) {
-    throw new Error(`${relative(cwd, absolute)} 已存在（如需覆盖请追加 --force）`);
+    throw new Error(
+      `${relative(cwd, absolute)} 已存在（如需覆盖请追加 --force）`,
+    );
   }
   fs.mkdirSync(path.dirname(absolute), { recursive: true });
   fs.writeFileSync(absolute, content);
@@ -84,7 +90,12 @@ function writeFile(relativePath, content, { force = false, cwd = process.cwd() }
 }
 
 // 在包入口文件末尾追加一条导出；已存在则跳过，保证脚本可重复执行
-function appendExport(relativeBarrel, exportName, source, { cwd = process.cwd() } = {}) {
+function appendExport(
+  relativeBarrel,
+  exportName,
+  source,
+  { cwd = process.cwd() } = {},
+) {
   const absolute = path.resolve(cwd, relativeBarrel);
   const line = `export { ${exportName} } from "${source}";`;
   if (!fs.existsSync(absolute)) {
@@ -102,10 +113,16 @@ function appendExport(relativeBarrel, exportName, source, { cwd = process.cwd() 
 }
 
 // 确保统一入口转导出指定子包；export * 会自动覆盖该包后续新增的成员
-function ensureBarrelExport(relativeBarrel, packageName, { cwd = process.cwd() } = {}) {
+function ensureBarrelExport(
+  relativeBarrel,
+  packageName,
+  { cwd = process.cwd() } = {},
+) {
   const absolute = path.resolve(cwd, relativeBarrel);
   if (!fs.existsSync(absolute)) {
-    warn(`未找到统一入口 ${relativeBarrel}，请手动补充 export * from "${packageName}"`);
+    warn(
+      `未找到统一入口 ${relativeBarrel}，请手动补充 export * from "${packageName}"`,
+    );
     return false;
   }
 
@@ -150,7 +167,9 @@ function syncMaterialPackage(packageName, { cwd = process.cwd() } = {}) {
     ok(`已将 ${packageName} 的 workspace 依赖设为 *`);
     changed = true;
   } else {
-    info(`${MATERIAL_PACKAGE_JSON} 已包含 ${packageName} 的 workspace:* 依赖，跳过`);
+    info(
+      `${MATERIAL_PACKAGE_JSON} 已包含 ${packageName} 的 workspace:* 依赖，跳过`,
+    );
   }
 
   if (ensureBarrelExport(MATERIAL_BARREL, packageName, { cwd })) changed = true;
@@ -164,7 +183,10 @@ function detectScope(packagesDir, { cwd = process.cwd() } = {}) {
   for (const entry of fs.readdirSync(absolute, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue;
     const pkg = readJson(path.join(absolute, entry.name, 'package.json'));
-    const match = pkg && typeof pkg.name === 'string' ? pkg.name.match(/^(@[^/]+)\//) : null;
+    const match =
+      pkg && typeof pkg.name === 'string'
+        ? pkg.name.match(/^(@[^/]+)\//)
+        : null;
     if (match) return match[1];
   }
   return null;
@@ -179,7 +201,9 @@ function nextDocOrder(docDir, { cwd = process.cwd() } = {}) {
       if (!entry.isDirectory()) continue;
       const docPath = path.join(absolute, entry.name, 'index.md');
       if (!fs.existsSync(docPath)) continue;
-      const match = fs.readFileSync(docPath, 'utf8').match(/^order:\s*(\d+)\s*$/m);
+      const match = fs
+        .readFileSync(docPath, 'utf8')
+        .match(/^order:\s*(\d+)\s*$/m);
       if (match) max = Math.max(max, Number(match[1]));
     }
   }
@@ -187,7 +211,8 @@ function nextDocOrder(docDir, { cwd = process.cwd() } = {}) {
 }
 
 const PATHS_ENTRY = /^(\s*)"(@[^"]+)":\s*\["packages\/([^"]+)\/src"\](,?)\s*$/;
-const ALIAS_ENTRY = /^(\s*)"(@[^"]+)":\s*resolve\(__dirname,\s*"packages\/([^"]+)\/src"\),?\s*$/;
+const ALIAS_ENTRY =
+  /^(\s*)"(@[^"]+)":\s*resolve\(__dirname,\s*"packages\/([^"]+)\/src"\),?\s*$/;
 
 // 返回最后一个匹配的行号；找不到返回 -1
 function findLastEntryIndex(lines, pattern) {
@@ -213,12 +238,18 @@ function linkTsconfigPaths(pkgName, dirName, { cwd = process.cwd() } = {}) {
   const lines = original.split('\n');
   const index = findLastEntryIndex(lines, PATHS_ENTRY);
   if (index === -1) {
-    warn(`tsconfig.json 未匹配到 "@scope/pkg": ["packages/*/src"] 形式的别名，请手动补 ${pkgName}`);
+    warn(
+      `tsconfig.json 未匹配到 "@scope/pkg": ["packages/*/src"] 形式的别名，请手动补 ${pkgName}`,
+    );
     return;
   }
   const indent = lines[index].match(PATHS_ENTRY)[1];
   lines[index] = `${lines[index].replace(/,\s*$/, '')},`;
-  lines.splice(index + 1, 0, `${indent}"${pkgName}": ["packages/${dirName}/src"]`);
+  lines.splice(
+    index + 1,
+    0,
+    `${indent}"${pkgName}": ["packages/${dirName}/src"]`,
+  );
   const updated = lines.join('\n');
   try {
     JSON.parse(updated);
@@ -248,7 +279,11 @@ function linkDumircAlias(pkgName, dirName, { cwd = process.cwd() } = {}) {
     return;
   }
   const indent = lines[index].match(ALIAS_ENTRY)[1];
-  lines.splice(index + 1, 0, `${indent}"${pkgName}": resolve(__dirname, "packages/${dirName}/src"),`);
+  lines.splice(
+    index + 1,
+    0,
+    `${indent}"${pkgName}": resolve(__dirname, "packages/${dirName}/src"),`,
+  );
   fs.writeFileSync(absolute, lines.join('\n'));
   ok(`更新 .dumirc.ts -> ${pkgName}`);
 }

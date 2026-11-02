@@ -13,8 +13,8 @@ order: 1
 ## 代码演示
 
 ```tsx
-import React from "react";
-import { AntdProvider, Button } from "@xzy18/components";
+import React from 'react';
+import { AntdProvider, Button } from '@xzy18/components';
 
 export default () => (
   <AntdProvider>

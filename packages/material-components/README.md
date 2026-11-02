@@ -7,7 +7,13 @@ pnpm add @xzy18/material-components antd react react-dom
 ```
 
 ```tsx
-import { AntdProvider, Button, clamp, cx, useBoolean } from "@xzy18/material-components";
+import {
+  AntdProvider,
+  Button,
+  clamp,
+  cx,
+  useBoolean,
+} from '@xzy18/material-components';
 ```
 
 仍可按需安装并使用以下独立包：

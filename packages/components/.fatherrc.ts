@@ -1,5 +1,5 @@
-import { defineConfig } from "father";
+import { defineConfig } from 'father';
 
 export default defineConfig({
-  extends: "../../father.config.ts",
+  extends: '../../father.config.ts',
 });

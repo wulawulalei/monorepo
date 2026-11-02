@@ -1,4 +1,2 @@
-export { cx } from "./cx";
-export { clamp } from "./clamp";
-
-
+export { clamp } from './clamp';
+export { cx } from './cx';

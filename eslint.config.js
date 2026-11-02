@@ -2,6 +2,4 @@
 
 const { eslint } = require('@xzy18/config');
 
-module.exports = [
-    ...eslint,
-];
+module.exports = [...eslint];

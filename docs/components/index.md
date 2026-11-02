@@ -8,16 +8,16 @@ toc: content
 
 `@xzy18/components` 是基于 [Ant Design](https://ant.design) 二次封装的 React 组件库，每个组件一个目录，可直接按需引入。
 
-| 组件 | 说明 |
-| --- | --- |
-| `Button` | 基于 antd `Button` 的封装，新增 `success` 状态 |
+| 组件           | 说明                                            |
+| -------------- | ----------------------------------------------- |
+| `Button`       | 基于 antd `Button` 的封装，新增 `success` 状态  |
 | `AntdProvider` | 全局主题配置，统一 antd 主题与 `prefixCls` 前缀 |
 
 ## 代码演示
 
 ```tsx
-import React from "react";
-import { AntdProvider, Button } from "@xzy18/components";
+import React from 'react';
+import { AntdProvider, Button } from '@xzy18/components';
 
 export default () => (
   <AntdProvider>
@@ -38,8 +38,8 @@ $ pnpm i @xzy18/components antd react react-dom
 建议在应用入口用 `AntdProvider` 包裹一次，即可获得统一的主题与类名前缀：
 
 ```tsx | pure
-import React from "react";
-import { AntdProvider } from "@xzy18/components";
+import React from 'react';
+import { AntdProvider } from '@xzy18/components';
 
 export default function App({ children }) {
   return <AntdProvider>{children}</AntdProvider>;

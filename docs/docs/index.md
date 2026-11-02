@@ -26,8 +26,8 @@ $ pnpm i @xzy18/xzy-materials --save
 每一个包都是一个独立的组件包，使用示例如下 ：
 
 ```tsx | pure
-import React from "react";
-import { Button } from "@xzy18/xzy-materials";
+import React from 'react';
+import { Button } from '@xzy18/xzy-materials';
 
 export default () => {
   return (

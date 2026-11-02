@@ -13,8 +13,8 @@ order: 1
 ## 代码演示
 
 ```tsx
-import React from "react";
-import { useBoolean } from "@xzy18/hooks";
+import React from 'react';
+import { useBoolean } from '@xzy18/hooks';
 
 export default () => {
   const { value, setTrue, setFalse, toggle } = useBoolean(false);
@@ -38,16 +38,16 @@ const { value, setTrue, setFalse, toggle, setValue } = useBoolean(initial);
 
 ### 参数
 
-| 参数 | 说明 | 类型 | 默认值 |
-| --- | --- | --- | --- |
+| 参数    | 说明   | 类型      | 默认值  |
+| ------- | ------ | --------- | ------- |
 | initial | 初始值 | `boolean` | `false` |
 
 ### 返回值
 
-| 返回值 | 说明 | 类型 |
-| --- | --- | --- |
-| value | 当前布尔值 | `boolean` |
-| setTrue | 置为 `true` | `() => void` |
-| setFalse | 置为 `false` | `() => void` |
-| toggle | 取反 | `() => void` |
-| setValue | 直接设置 | `Dispatch<SetStateAction<boolean>>` |
+| 返回值   | 说明         | 类型                                |
+| -------- | ------------ | ----------------------------------- |
+| value    | 当前布尔值   | `boolean`                           |
+| setTrue  | 置为 `true`  | `() => void`                        |
+| setFalse | 置为 `false` | `() => void`                        |
+| toggle   | 取反         | `() => void`                        |
+| setValue | 直接设置     | `Dispatch<SetStateAction<boolean>>` |

@@ -34,28 +34,21 @@
       "name": "@xzy18/components",
       "type": "patch",
       "oldVersion": "0.0.2-alpha.1",
-      "changesets": [
-        "sparkly-forks-hammer",
-        "wise-moles-fall"
-      ],
+      "changesets": ["sparkly-forks-hammer", "wise-moles-fall"],
       "newVersion": "0.0.2"
     },
     {
       "name": "@xzy18/hooks",
       "type": "patch",
       "oldVersion": "0.0.2-alpha.0",
-      "changesets": [
-        "wise-moles-fall"
-      ],
+      "changesets": ["wise-moles-fall"],
       "newVersion": "0.0.2"
     },
     {
       "name": "@xzy18/utils",
       "type": "patch",
       "oldVersion": "0.0.2-alpha.0",
-      "changesets": [
-        "wise-moles-fall"
-      ],
+      "changesets": ["wise-moles-fall"],
       "newVersion": "0.0.2"
     }
   ],
@@ -67,9 +60,6 @@
       "@xzy18/hooks": "0.0.1",
       "@xzy18/utils": "0.0.1"
     },
-    "changesets": [
-      "sparkly-forks-hammer",
-      "wise-moles-fall"
-    ]
+    "changesets": ["sparkly-forks-hammer", "wise-moles-fall"]
   }
 }

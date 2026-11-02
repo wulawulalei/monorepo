@@ -110,7 +110,7 @@ resolve: {
 `.dumirc.ts` 已配置源码目录别名，文档 demo 直接使用包名即可，无需先构建：
 
 ```tsx | pure
-import { Button } from "@xzy18/components";
+import { Button } from '@xzy18/components';
 ```
 
 `@xzy18/components`、`@xzy18/hooks`、`@xzy18/utils` 均指向对应包的 `src`，修改源码后文档可即时热更新。
