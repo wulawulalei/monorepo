@@ -277,7 +277,7 @@ function printHelp() {
 function buildChangesetContent(affectedPackages, bump) {
   const lines = ['---'];
   for (const [, packageName] of affectedPackages) {
-    lines.push(`"${packageName}": ${bump}`);
+    lines.push(`'${packageName}': ${bump}`);
   }
   lines.push('---', '', '根据 Git 变更自动生成的 changeset。', '');
   return lines.join('\n');
