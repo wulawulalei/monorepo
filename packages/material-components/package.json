@@ -5,6 +5,20 @@
   "description": "Unified runtime materials for the xzy-materials ecosystem",
   "license": "MIT",
   "sideEffects": false,
+  "type": "commonjs",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./es/index.d.ts",
+        "default": "./es/index.js"
+      },
+      "require": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
   "main": "lib/index.js",
   "module": "es/index.js",
   "types": "lib/index.d.ts",
@@ -14,7 +28,7 @@
     "es"
   ],
   "scripts": {
-    "build": "father build",
+    "build": "father build && node ../../scripts/postbuild.cjs",
     "prepack": "pnpm build"
   },
   "dependencies": {

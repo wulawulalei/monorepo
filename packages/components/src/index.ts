@@ -1,2 +1,2 @@
-export { Button } from './Button';
-export { AntdProvider } from './Provider';
+export { Button, type ButtonProps } from './Button';
+export { AntdProvider, type AntdProviderProps } from './Provider';
