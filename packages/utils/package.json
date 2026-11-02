@@ -4,8 +4,9 @@
   "private": false,
   "description": "xzy utilities for React/Antd ecosystem",
   "license": "MIT",
-  "module": "es/index.js",
+  "sideEffects": false,
   "main": "lib/index.js",
+  "module": "es/index.js",
   "types": "lib/index.d.ts",
   "files": [
     "lib",
@@ -22,6 +23,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "sideEffects": false
+  }
 }

@@ -2,7 +2,7 @@
 
 // 组件源码模板：与 packages/components 现有风格保持一致，并预置中文备注供后续填充
 function componentIndex(name) {
-  return `import React, { ReactNode } from "react";
+  return `import React, { ReactNode } from 'react';
 
 export type ${name}Props = {
   /** 子节点内容 */
@@ -37,8 +37,8 @@ ${name} 组件。
 ## 代码演示
 
 \`\`\`tsx
-import React from "react";
-import { ${name} } from "${importName}";
+import React from 'react';
+import { ${name} } from '${importName}';
 
 export default () => <${name} />;
 \`\`\`
@@ -47,7 +47,7 @@ export default () => <${name} />;
 
 // hook 模板：写入 packages/hooks/src/<name>/index.ts，与组件的"文件夹 + index"结构保持一致
 function hookSource(name) {
-  return `import { useCallback, useState } from "react";
+  return `import { useCallback, useState } from 'react';
 
 /**
  * ${name} —— 布尔状态 hook 模板
@@ -87,8 +87,8 @@ TODO: 说明 ${name} 的适用场景与注意事项。
 ## 代码演示
 
 \`\`\`tsx
-import React from "react";
-import { ${name} } from "${importName}";
+import React from 'react';
+import { ${name} } from '${importName}';
 
 export default () => {
   const result = ${name}();
@@ -104,19 +104,34 @@ export default () => {
 }
 
 // 新包 package.json 模板：字段与现有包保持一致（注意 files 只声明实际会产出的目录）
-function packageJson({ name, packageName, description }) {
+function packageJson({ packageName, description }) {
   const manifest = {
     name: packageName,
     version: '0.0.0',
     private: false,
     description,
     license: 'MIT',
-    module: 'es/index.js',
+    sideEffects: false,
+    type: 'commonjs',
+    exports: {
+      '.': {
+        import: {
+          types: './es/index.d.ts',
+          default: './es/index.js',
+        },
+        require: {
+          types: './lib/index.d.ts',
+          default: './lib/index.js',
+        },
+      },
+      './package.json': './package.json',
+    },
     main: 'lib/index.js',
+    module: 'es/index.js',
     types: 'lib/index.d.ts',
     files: ['lib', 'es'],
     scripts: {
-      build: 'father build',
+      build: 'father build && node ../../scripts/postbuild.cjs',
       prepack: 'pnpm build',
     },
     devDependencies: {
@@ -126,17 +141,16 @@ function packageJson({ name, packageName, description }) {
     publishConfig: {
       access: 'public',
     },
-    sideEffects: false,
   };
   return `${JSON.stringify(manifest, null, 2)}\n`;
 }
 
 // 新包 father 配置：仅继承仓库根配置，保持"配置只在根目录维护一份"
 function fatherRc() {
-  return `import { defineConfig } from "father";
+  return `import { defineConfig } from 'father';
 
 export default defineConfig({
-  extends: "../../father.config.ts",
+  extends: '../../father.config.ts',
 });
 `;
 }

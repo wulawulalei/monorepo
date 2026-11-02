@@ -211,8 +211,47 @@ function nextDocOrder(docDir, { cwd = process.cwd() } = {}) {
 }
 
 const PATHS_ENTRY = /^(\s*)"(@[^"]+)":\s*\["packages\/([^"]+)\/src"\](,?)\s*$/;
-const ALIAS_ENTRY =
-  /^(\s*)"(@[^"]+)":\s*resolve\(__dirname,\s*"packages\/([^"]+)\/src"\),?\s*$/;
+const ALIAS_ENTRY_START = /^(\s*)(['"])(@[^'"]+)\2\s*:\s*resolve\(/;
+
+// 扫描 resolve( 的括号层级，兼容单行和 Prettier 拆分后的多行 alias。
+function findCallEndIndex(lines, startIndex) {
+  let depth = 0;
+  let started = false;
+
+  for (let lineIndex = startIndex; lineIndex < lines.length; lineIndex += 1) {
+    for (const character of lines[lineIndex]) {
+      if (character === '(') {
+        depth += 1;
+        started = true;
+      } else if (character === ')') {
+        depth -= 1;
+      }
+    }
+    if (started && depth === 0) return lineIndex;
+  }
+
+  return -1;
+}
+
+// 扫描对象的大括号层级，确定 alias 配置块的结束位置。
+function findObjectEndIndex(lines, startIndex) {
+  let depth = 0;
+  let started = false;
+
+  for (let lineIndex = startIndex; lineIndex < lines.length; lineIndex += 1) {
+    for (const character of lines[lineIndex]) {
+      if (character === '{') {
+        depth += 1;
+        started = true;
+      } else if (character === '}') {
+        depth -= 1;
+      }
+    }
+    if (started && depth === 0) return lineIndex;
+  }
+
+  return -1;
+}
 
 // 返回最后一个匹配的行号；找不到返回 -1
 function findLastEntryIndex(lines, pattern) {
@@ -268,21 +307,43 @@ function linkDumircAlias(pkgName, dirName, { cwd = process.cwd() } = {}) {
     return;
   }
   const original = fs.readFileSync(absolute, 'utf8');
-  if (original.includes(`"${pkgName}"`)) {
+  if (original.includes(`'${pkgName}'`) || original.includes(`"${pkgName}"`)) {
     info(`.dumirc.ts 已包含 ${pkgName}，跳过`);
     return;
   }
   const lines = original.split('\n');
-  const index = findLastEntryIndex(lines, ALIAS_ENTRY);
+  const aliasStart = lines.findIndex((line) => /^\s*alias\s*:\s*\{/.test(line));
+  let index = -1;
+  let indent = '    ';
+  let quote = "'";
+  const aliasEnd = findObjectEndIndex(lines, aliasStart);
+
+  if (aliasStart === -1 || aliasEnd === -1) {
+    warn(`.dumirc.ts 未匹配到 alias 配置块，请手动补 ${pkgName}`);
+    return;
+  }
+
+  for (let lineIndex = aliasStart + 1; lineIndex < aliasEnd; lineIndex += 1) {
+    const match = lines[lineIndex].match(ALIAS_ENTRY_START);
+    if (!match) continue;
+
+    const endIndex = findCallEndIndex(lines, lineIndex);
+    if (endIndex === -1) continue;
+
+    index = endIndex;
+    indent = match[1];
+    quote = match[2];
+    lineIndex = endIndex;
+  }
+
   if (index === -1) {
     warn(`.dumirc.ts 未匹配到既有 alias 行，请手动补 ${pkgName}`);
     return;
   }
-  const indent = lines[index].match(ALIAS_ENTRY)[1];
   lines.splice(
     index + 1,
     0,
-    `${indent}"${pkgName}": resolve(__dirname, "packages/${dirName}/src"),`,
+    `${indent}${quote}${pkgName}${quote}: resolve(__dirname, ${quote}packages/${dirName}/src${quote}),`,
   );
   fs.writeFileSync(absolute, lines.join('\n'));
   ok(`更新 .dumirc.ts -> ${pkgName}`);

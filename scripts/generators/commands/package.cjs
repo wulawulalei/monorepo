@@ -16,10 +16,16 @@ function run({ positionals, flags }, { cwd }) {
     return 1;
   }
 
-  const scope = typeof flags.scope === 'string' ? flags.scope : utils.detectScope('packages', { cwd }) || '@xzy18';
+  const scope =
+    typeof flags.scope === 'string'
+      ? flags.scope
+      : utils.detectScope('packages', { cwd }) || '@xzy18';
   const packageName = `${scope}/${dirName}`;
   const packageDir = path.join('packages', dirName);
-  const description = typeof flags.description === 'string' ? flags.description : `${packageName} for xzy-materials`;
+  const description =
+    typeof flags.description === 'string'
+      ? flags.description
+      : `${packageName} for xzy-materials`;
 
   if (utils.fileExists(path.join(packageDir, 'package.json'), { cwd })) {
     utils.fail(`${packageDir}/package.json 已存在，请换个包名或先删除该目录`);
@@ -33,11 +39,19 @@ function run({ positionals, flags }, { cwd }) {
       templates.packageJson({ name: dirName, packageName, description }),
       { force: flags.force, cwd },
     );
-    utils.writeFile(path.join(packageDir, '.fatherrc.ts'), templates.fatherRc(), { force: flags.force, cwd });
-    utils.writeFile(path.join(packageDir, 'src/index.ts'), templates.packageIndex(packageName), {
-      force: flags.force,
-      cwd,
-    });
+    utils.writeFile(
+      path.join(packageDir, '.fatherrc.ts'),
+      templates.fatherRc(),
+      { force: flags.force, cwd },
+    );
+    utils.writeFile(
+      path.join(packageDir, 'src/index.ts'),
+      templates.packageIndex(packageName),
+      {
+        force: flags.force,
+        cwd,
+      },
+    );
   } catch (error) {
     utils.fail(error.message);
     return 1;
@@ -50,7 +64,9 @@ function run({ positionals, flags }, { cwd }) {
     utils.syncMaterialPackage(packageName, { cwd });
   }
   utils.log('');
-  utils.info(`pnpm-workspace.yaml 使用 packages/* 通配，无需改动；在 ${packageDir}/src/index.ts 导出 API 后即可 pnpm build。`);
+  utils.info(
+    `pnpm-workspace.yaml 使用 packages/* 通配，无需改动；在 ${packageDir}/src/index.ts 导出 API 后即可 pnpm build。`,
+  );
   utils.info('发布前记得创建 changeset：pnpm changeset');
   return 0;
 }

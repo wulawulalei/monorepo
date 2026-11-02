@@ -4,8 +4,9 @@
   "private": false,
   "description": "Unified runtime materials for the xzy-materials ecosystem",
   "license": "MIT",
-  "module": "es/index.js",
+  "sideEffects": false,
   "main": "lib/index.js",
+  "module": "es/index.js",
   "types": "lib/index.d.ts",
   "files": [
     "lib",
@@ -21,19 +22,18 @@
     "@xzy18/hooks": "workspace:*",
     "@xzy18/utils": "workspace:*"
   },
-  "peerDependencies": {
-    "antd": "^5.20.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
   "devDependencies": {
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "father": "^4.6.8",
     "typescript": "^5.6.3"
   },
+  "peerDependencies": {
+    "antd": "^5.20.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
   "publishConfig": {
     "access": "public"
-  },
-  "sideEffects": false
+  }
 }
