@@ -36,7 +36,7 @@ function run({ positionals, flags }, { cwd }) {
   try {
     utils.writeFile(
       path.join(packageDir, 'package.json'),
-      templates.packageJson({ name: dirName, packageName, description }),
+      templates.packageJson({ packageName, description }),
       { force: flags.force, cwd },
     );
     utils.writeFile(

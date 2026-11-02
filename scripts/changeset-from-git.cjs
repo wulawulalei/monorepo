@@ -96,30 +96,6 @@ function resolvePackageNames(packageNames, packages, dirNameToDir) {
 }
 
 /**
- * 解析基准引用，优先使用 origin/<baseBranch>，其次本地分支
- * @param {string} baseBranch - 基准分支名
- * @returns {string} 解析后的 Git 引用
- */
-function resolveBaseRef(baseBranch) {
-  for (const candidate of [`origin/${baseBranch}`, baseBranch]) {
-    try {
-      execFileSync('git', ['rev-parse', '--verify', `${candidate}^{commit}`], {
-        cwd: repoRoot,
-        stdio: 'ignore',
-      });
-      return candidate;
-    } catch {
-      // 尝试下一个候选
-    }
-  }
-
-  throw new Error(
-    `无法解析基准引用。已尝试 origin/${baseBranch} 和 ${baseBranch}。` +
-      '请使用 --base <ref> 指定一个存在的分支或提交。',
-  );
-}
-
-/**
  * 执行 Git 命令并返回标准输出，失败时返回空字符串
  * @param {string[]} args - Git 命令参数
  * @returns {string} 命令输出
@@ -134,66 +110,6 @@ function runGit(args) {
   } catch {
     return '';
   }
-}
-
-/**
- * 收集基准引用到 HEAD 之间的所有变更路径
- * 包含已提交、已暂存、未暂存和未跟踪的文件
- * @param {string} baseRef - 基准引用（如 origin/master）
- * @returns {string[]} 变更文件路径列表
- */
-function collectChangedPaths(baseRef) {
-  const sources = [
-    // 自基准分支分叉以来 HEAD 上的提交（两点语法：base..HEAD）。
-    // 三点语法（base...HEAD）会找 merge-base，当 HEAD 已经在基准之上时会漏掉变更。
-    runGit(['diff', '--name-only', `${baseRef}..HEAD`]),
-    // 工作区中未暂存的变更
-    runGit(['diff', '--name-only']),
-    // 已暂存的变更
-    runGit(['diff', '--cached', '--name-only']),
-    // 未被忽略规则排除的未跟踪文件
-    runGit(['ls-files', '--others', '--exclude-standard']),
-  ];
-
-  const paths = new Set();
-  for (const output of sources) {
-    for (const line of output.split('\n')) {
-      const trimmed = line.trim().replace(/\\/g, '/');
-      if (trimmed) {
-        paths.add(trimmed);
-      }
-    }
-  }
-
-  return [...paths];
-}
-
-/**
- * 根据变更路径列表找出受影响的包
- * @param {string[]} changedPaths - 变更文件路径列表
- * @param {Map<string, string>} packages - 所有 workspace 包
- * @returns {string[]} 受影响的包目录路径列表
- */
-function findAffectedPackages(changedPaths, packages) {
-  const affected = new Set();
-
-  for (const changedPath of changedPaths) {
-    if (!changedPath.startsWith('packages/')) {
-      continue;
-    }
-
-    const rest = changedPath.slice('packages/'.length);
-    const slashIndex = rest.indexOf('/');
-    const packageDir = `packages/${
-      slashIndex === -1 ? rest : rest.slice(0, slashIndex)
-    }`;
-
-    if (packages.has(packageDir)) {
-      affected.add(packageDir);
-    }
-  }
-
-  return [...affected].sort();
 }
 
 /**
@@ -291,12 +207,11 @@ function collectChangedPathsForPackage(packageName, packageDir) {
 /**
  * 解析命令行参数
  * @param {string[]} argv - process.argv.slice(2)
- * @returns {{ bump: string|null, base: string|null, dryRun: boolean, packages: string[]|null, help: boolean }}
+ * @returns {{ bump: string|null, dryRun: boolean, packages: string[]|null, help: boolean }}
  */
 function parseArgs(argv) {
   const args = {
     bump: null,
-    base: null,
     dryRun: false,
     packages: null,
   };
@@ -312,10 +227,6 @@ function parseArgs(argv) {
       args.bump = argv[++i];
     } else if (arg.startsWith('--bump=')) {
       args.bump = arg.slice('--bump='.length);
-    } else if (arg === '--base') {
-      args.base = argv[++i];
-    } else if (arg.startsWith('--base=')) {
-      args.base = arg.slice('--base='.length);
     } else if (arg === '--packages' || arg === '-p') {
       args.packages = (argv[++i] || '')
         .split(',')
@@ -350,7 +261,6 @@ function printHelp() {
 
 选项：
   --bump <patch|minor|major>   版本升级类型（默认：patch）
-  --base <ref>                 对比的基准引用（默认：config.baseBranch）
   --packages <names>           逗号分隔的包名列表，跳过自动检测
                                （如 "@xzy18/components,@xzy18/utils"）。
                                支持完整包名或目录名。
