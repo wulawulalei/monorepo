@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { clamp } from './clamp';
+import { clamp } from '../clamp';
 
 describe('clamp', () => {
   it('返回区间内的原值', () => {

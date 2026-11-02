@@ -3,6 +3,7 @@ import { defineConfig } from 'father';
 const ignores = [
   'src/demos/**/*',
   '**/*.md',
+  '**/__test__/**/*',
   '**/*.{test,spec}.{js,jsx,ts,tsx}',
 ];
 

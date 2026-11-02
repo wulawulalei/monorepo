@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { useBoolean } from '.';
+import { useBoolean } from '..';
 
 describe('useBoolean', () => {
   it('使用默认初始值并提供布尔状态操作', () => {

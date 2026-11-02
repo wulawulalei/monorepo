@@ -305,7 +305,7 @@ function verifyManifest(item, files) {
 
   const invalidFiles = [...files].filter(
     (file) =>
-      /(^|\/)(tests?|__tests__)\//.test(file) ||
+      /(^|\/)(tests?|__tests?__)\//.test(file) ||
       /\.(?:test|spec)\.[cm]?[jt]sx?$/.test(file),
   );
   assert(

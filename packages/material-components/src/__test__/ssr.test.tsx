@@ -1,6 +1,6 @@
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { AntdProvider, Button, clamp, cx, useBoolean } from '.';
+import { AntdProvider, Button, clamp, cx, useBoolean } from '..';
 
 describe('统一入口', () => {
   it('导出所有运行时能力', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cx } from './cx';
+import { cx } from '../cx';
 
 describe('cx', () => {
   it('拼接有效类名', () => {
