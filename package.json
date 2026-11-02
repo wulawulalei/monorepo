@@ -20,6 +20,7 @@
     "release:docs": "dumi build && gh-pages -d docs-dist",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:packages": "node ./scripts/check-packages.cjs",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "version-packages": "changeset version && pnpm changelog"
@@ -48,6 +49,7 @@
     "gh-pages": "^6.3.0",
     "jsdom": "25.0.1",
     "prettier": "^2.8.8",
+    "publint": "0.3.12",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "turbo": "^2.1.3",

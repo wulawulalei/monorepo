@@ -1,33 +1,33 @@
 ## Component Library Monorepo
 
-Stack: pnpm + turborepo + changesets + dumi + antd + react
+技术栈：pnpm + turborepo + changesets + dumi + antd + react
 
 ### Quickstart
 
-1. Install deps (requires pnpm):
+1. 安装依赖（需要 pnpm）：
 
 ```bash
 pnpm install
 ```
 
-2. Dev docs (dumi) for the library:
+2. 启动组件文档：
 
 ```bash
 pnpm dev
 ```
 
-3. Build library:
+3. 构建组件库：
 
 ```bash
 pnpm build
 ```
 
-4. Version and release with changesets:
+4. 使用 Changesets 管理版本和发布：
 
 ```bash
-# create a changeset
+# 创建 changeset
 pnpm changeset
-# bump versions, build, commit, publish, and push tags
+# 运行质量门禁、升级版本、构建、发布并推送标签
 pnpm release
 ```
 
@@ -44,11 +44,26 @@ pnpm release
 pnpm alpha:exit
 ```
 
-### Workspace layout
+### 质量与发布校验
+
+```bash
+pnpm format:check   # 检查 Prettier 格式
+pnpm lint           # ESLint 零警告检查
+pnpm typecheck      # TypeScript 全仓类型检查
+pnpm test           # Vitest 单元测试
+pnpm test:coverage  # 单元测试及覆盖率
+pnpm build          # 构建全部可发布包
+pnpm docs:build     # 构建静态文档
+pnpm test:packages  # 打包后 consumer 消费校验
+```
+
+`test:packages` 会为每个非 private 包生成真实 tarball，检查条件导出、声明文件、测试文件泄漏与 `workspace:` 协议，再执行 `publint --strict`，并在独立消费工程中验证 CommonJS、ESM 和 TypeScript NodeNext 引用。
+
+### 目录结构
 
 - `packages/material-components`: 汇总组件、Hooks 和工具函数的统一运行时入口
 - `packages/components`: antd 二次封装的组件库（Button、Provider 等）
-- `packages/hooks`: 通用 React hooks（如 useBoolean）
+- `packages/hooks`: 通用 React hooks（如 useBoolean、useDebouncedValue）
 - `packages/utils`: 工具函数（如 cx）
 
 外部项目安装统一入口：
