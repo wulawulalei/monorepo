@@ -8,5 +8,7 @@
     "@xzy18/material-components": "1.0.1",
     "@xzy18/utils": "0.0.3"
   },
-  "changesets": []
+  "changesets": [
+    "twenty-dancers-double"
+  ]
 }

@@ -1,6 +1,6 @@
 {
   "name": "@xzy18/components",
-  "version": "0.0.3",
+  "version": "0.0.4-alpha.0",
   "private": false,
   "description": "xzy React components built on Ant Design",
   "license": "MIT",
