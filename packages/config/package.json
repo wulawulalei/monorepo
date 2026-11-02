@@ -4,19 +4,42 @@
   "private": false,
   "description": "Shared ESLint and Prettier configuration for xzy-materials packages",
   "license": "MIT",
+  "type": "commonjs",
   "exports": {
-    ".": "./src/index.js"
+    ".": {
+      "import": {
+        "types": "./src/index.d.mts",
+        "default": "./src/index.mjs"
+      },
+      "require": {
+        "types": "./src/index.d.ts",
+        "default": "./src/index.js"
+      }
+    },
+    "./eslint": {
+      "types": "./src/eslint.d.ts",
+      "default": "./src/eslint.js"
+    },
+    "./prettier": {
+      "types": "./src/prettier.d.ts",
+      "default": "./src/prettier.js"
+    },
+    "./package.json": "./package.json"
   },
   "main": "src/index.js",
+  "module": "src/index.mjs",
+  "types": "src/index.d.ts",
   "files": [
     "src"
   ],
   "scripts": {
-    "build": "father build",
+    "build": "pnpm exec eslint ./src --max-warnings=0 --no-warn-ignored",
     "prepack": "pnpm build"
   },
   "dependencies": {
     "@eslint/js": "^8.57.1",
+    "@types/eslint": "^8.56.12",
+    "@types/prettier": "^2.7.3",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "@umijs/fabric": "^4.0.1",
