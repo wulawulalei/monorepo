@@ -75,7 +75,7 @@ pnpm add @xzy18/material-components
 
 ### 代码生成器
 
-`pnpm gen` 提供组件 / hook / 新包的脚手架，零外部依赖，脚本位于 `scripts/generators/`：
+`pnpm gen` 提供组件 / hook / 新包的脚手架，脚本位于 `scripts/generators/`，统一使用 TypeScript 编写并由 `tsx` 执行：
 
 ```bash
 pnpm gen component ProTable --title "高级表格"   # 组件、文档及统一入口
