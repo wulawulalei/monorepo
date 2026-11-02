@@ -101,7 +101,8 @@ function main() {
   console.log('[5/6] 发布到 npm');
   const publishArgs = ['exec', 'changeset', 'publish'];
   if (alpha) {
-    publishArgs.push('--no-git-tag', '--tag', 'alpha');
+    // pre 模式会自动使用 pre.json 中的 alpha 标签，重复指定会被 CLI 拒绝。
+    publishArgs.push('--no-git-tag');
   }
 
   try {
