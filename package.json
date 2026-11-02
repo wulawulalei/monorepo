@@ -23,6 +23,7 @@
     "test:packages": "node ./scripts/check-packages.cjs",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit -p tsconfig.json",
+    "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm build && pnpm docs:build && pnpm test:packages",
     "version-packages": "changeset version && pnpm changelog"
   },
   "devDependencies": {

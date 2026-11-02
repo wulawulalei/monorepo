@@ -55,9 +55,10 @@ pnpm test:coverage  # 单元测试及覆盖率
 pnpm build          # 构建全部可发布包
 pnpm docs:build     # 构建静态文档
 pnpm test:packages  # 打包后 consumer 消费校验
+pnpm verify         # 发布前完整门禁
 ```
 
-`test:packages` 会为每个非 private 包生成真实 tarball，检查条件导出、声明文件、测试文件泄漏与 `workspace:` 协议，再执行 `publint --strict`，并在独立消费工程中验证 CommonJS、ESM 和 TypeScript NodeNext 引用。
+`test:packages` 会为每个非 private 包生成真实 tarball，检查条件导出、声明文件、测试文件泄漏与 `workspace:` 协议，再执行 `publint --strict`，并在独立消费工程中验证 CommonJS、ESM 和 TypeScript NodeNext 引用。`pnpm release` 在执行任何版本变更前会强制运行 `pnpm verify`。
 
 ### 目录结构
 

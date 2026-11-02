@@ -76,13 +76,16 @@ function main() {
 
   const { alpha, branch } = checkRelease();
 
-  console.log(`[1/5] 在 ${branch} 分支更新版本和 CHANGELOG`);
+  console.log('[1/6] 运行发布前质量门禁');
+  run('pnpm', ['verify']);
+
+  console.log(`[2/6] 在 ${branch} 分支更新版本和 CHANGELOG`);
   run('pnpm', ['version-packages']);
 
-  console.log('[2/5] 构建全部包');
+  console.log('[3/6] 构建全部包');
   run('pnpm', ['build']);
 
-  console.log('[3/5] 提交版本改动');
+  console.log('[4/6] 提交版本改动');
   run('git', ['add', '--all']);
   if (!git(['diff', '--cached', '--name-only'])) {
     throw new Error('版本命令没有产生任何改动');
@@ -95,7 +98,7 @@ function main() {
 
   const tagsBefore = getTags();
 
-  console.log('[4/5] 发布到 npm');
+  console.log('[5/6] 发布到 npm');
   const publishArgs = ['exec', 'changeset', 'publish'];
   if (alpha) {
     publishArgs.push('--no-git-tag', '--tag', 'alpha');
@@ -117,9 +120,9 @@ function main() {
   }
 
   if (alpha) {
-    console.log('[5/5] alpha 发布跳过文档部署');
+    console.log('[6/6] alpha 发布跳过文档部署');
   } else {
-    console.log('[5/5] 发布文档');
+    console.log('[6/6] 发布文档');
     try {
       run('pnpm', ['release:docs']);
     } catch {
