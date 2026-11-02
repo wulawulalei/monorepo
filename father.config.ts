@@ -1,6 +1,10 @@
 import { defineConfig } from 'father';
 
-const ignores = ['src/demos/**/*', '**/*.md'];
+const ignores = [
+  'src/demos/**/*',
+  '**/*.md',
+  '**/*.{test,spec}.{js,jsx,ts,tsx}',
+];
 
 export default defineConfig({
   esm: {

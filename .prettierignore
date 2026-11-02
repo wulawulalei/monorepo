@@ -4,6 +4,8 @@ lib
 es
 esm
 docs-dist
+coverage
+**/CHANGELOG.md
 .dumi
 .turbo
 pnpm-lock.yaml

@@ -6,5 +6,5 @@ module.exports = {
   trailingComma: 'all',
   proseWrap: 'never',
   overrides: [{ files: '.prettierrc', options: { parser: 'json' } }],
-  plugins: ['prettier-plugin-packagejson'],
+  plugins: ['prettier-plugin-organize-imports', 'prettier-plugin-packagejson'],
 };

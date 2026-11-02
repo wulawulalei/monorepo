@@ -11,6 +11,7 @@ esm
 .umi
 .changeset/cache
 docs-dist
+coverage
 .dumi/tmp
 .dumi/tmp-production
 packages/**/lib/**

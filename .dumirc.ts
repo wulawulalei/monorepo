@@ -25,7 +25,14 @@ export default defineConfig({
   },
   extraRemarkPlugins: [
     () => {
-      return (_tree: any, file: any) => {
+      return (
+        _tree: unknown,
+        file: {
+          data?: {
+            frontmatter?: Record<string, unknown>;
+          };
+        },
+      ) => {
         // ensure frontmatter exists
         file.data = file.data || {};
         file.data.frontmatter = file.data.frontmatter || {};

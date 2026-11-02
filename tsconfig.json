@@ -18,7 +18,13 @@
       "@xzy18/utils": ["packages/utils/src"],
       "@xzy18/material-components": ["packages/material-components/src"]
     },
-    "types": ["node", "react", "react-dom"]
+    "types": [
+      "node",
+      "react",
+      "react-dom",
+      "vitest/globals",
+      "@testing-library/jest-dom"
+    ]
   },
   "include": ["packages/*/src", "docs", ".dumirc.ts"]
 }
