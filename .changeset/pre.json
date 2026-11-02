@@ -1,0 +1,12 @@
+{
+  "mode": "pre",
+  "tag": "alpha",
+  "initialVersions": {
+    "@xzy18/components": "0.0.3",
+    "@xzy18/config": "0.0.2",
+    "@xzy18/hooks": "0.0.3",
+    "@xzy18/material-components": "1.0.1",
+    "@xzy18/utils": "0.0.3"
+  },
+  "changesets": []
+}
