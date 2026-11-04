@@ -131,6 +131,7 @@ jobs:
         run: pnpm exec tsx scripts/size-limit-report.ts "$RUNNER_TEMP/size-current.json" "$RUNNER_TEMP/size-base.json" "$RUNNER_TEMP/size-limit-report.md" "$CHANGED_PACKAGES"
 
       - name: Comment report
+        if: steps.package_changes.outputs.changed == 'true' && steps.report.outputs.has_report == 'true'
         uses: actions/github-script@v9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
