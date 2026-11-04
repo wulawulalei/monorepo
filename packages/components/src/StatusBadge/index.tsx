@@ -1,11 +1,19 @@
-import { Badge, type BadgeProps } from 'antd';
-import type { ReactNode } from 'react';
+import { Badge, Tag, type BadgeProps } from 'antd';
+import type { HTMLAttributes, ReactNode } from 'react';
 
 export type StatusBadgeStatus = NonNullable<BadgeProps['status']>;
 
-export type StatusBadgeProps = Omit<BadgeProps, 'status' | 'text'> & {
+type StatusBadgeSharedProps = Omit<
+  HTMLAttributes<HTMLSpanElement>,
+  'children' | 'color'
+> & {
+  color?: BadgeProps['color'];
+};
+
+export type StatusBadgeProps = StatusBadgeSharedProps & {
   status: StatusBadgeStatus;
   text?: ReactNode;
+  showDot?: boolean;
 };
 
 const defaultStatusText: Record<StatusBadgeStatus, string> = {
@@ -16,12 +24,22 @@ const defaultStatusText: Record<StatusBadgeStatus, string> = {
   warning: '警告',
 };
 
-export function StatusBadge({ status, text, ...rest }: StatusBadgeProps) {
-  return (
-    <Badge
-      {...rest}
-      status={status}
-      text={text === undefined ? defaultStatusText[status] : text}
-    />
-  );
+export function StatusBadge({
+  status,
+  text,
+  showDot = true,
+  color,
+  ...props
+}: StatusBadgeProps) {
+  const statusText = text === undefined ? defaultStatusText[status] : text;
+
+  if (!showDot) {
+    return (
+      <Tag {...props} color={color ?? status}>
+        {statusText}
+      </Tag>
+    );
+  }
+
+  return <Badge {...props} color={color} status={status} text={statusText} />;
 }

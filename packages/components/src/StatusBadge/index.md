@@ -23,6 +23,7 @@ export default () => (
     <StatusBadge status="warning" text="待确认" />
     <StatusBadge status="error" />
     <StatusBadge status="default" />
+    <StatusBadge status="success" text="已完成" showDot={false} />
   </AntdProvider>
 );
 ```
@@ -33,5 +34,7 @@ export default () => (
 | --- | --- | --- | --- |
 | `status` | 状态类型 | `'success' \| 'processing' \| 'default' \| 'error' \| 'warning'` | - |
 | `text` | 状态文案，传空字符串时不显示 | `ReactNode` | 对应状态的中文默认文案 |
+| `showDot` | 是否显示状态圆点；关闭后渲染为状态色标签 | `boolean` | `true` |
+| `color` | 自定义状态色 | `string` | 与 `status` 相同 |
 
-其余属性透传给 antd 的 <a href="https://ant.design/components/badge-cn" target="_blank" rel="noreferrer">Badge</a>。
+通用的 `className`、`style`、`title` 与事件属性会透传给根元素。
