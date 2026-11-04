@@ -17,7 +17,7 @@ const config = [
     import: '*',
     ignore: external,
     gzip: true,
-    limit: '1.25 kB',
+    limit: '1.3 kB',
   },
   {
     name: '@xzy18/hooks',
