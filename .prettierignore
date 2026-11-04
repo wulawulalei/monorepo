@@ -9,3 +9,4 @@ coverage
 .dumi
 .turbo
 pnpm-lock.yaml
+.changeset/*.md
