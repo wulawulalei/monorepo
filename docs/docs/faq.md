@@ -42,7 +42,7 @@ Lerna 解决的是三件事：多包依赖安装（`bootstrap`）、统一版本
 | --- | --- | --- |
 | 依赖安装与链接 | pnpm workspace | lerna 自己不装依赖，6.x 起把安装委托给 `npmClient`（npm/yarn/pnpm），等于还得再选一个包管理器 |
 | 任务编排与缓存 | turborepo | `lerna run` 只是并发跑脚本，没有任务依赖图，也没有产物缓存；turbo 支持 `dependsOn` 与缓存（见 `turbo.json` 的 `outputs`） |
-| 版本与发布 | changesets | lerna 的 fixed / locked 版本模式偏重；本项目要的是按包独立的 patch / minor / major + 自动 CHANGELOG + 预发布跳过，changesets 更贴合（见 `CHANGESET_WORKFLOW.md`） |
+| 版本与发布 | changesets | lerna 的 fixed / locked 版本模式偏重；本项目要的是按包独立的 patch / minor / major + 自动 CHANGELOG + 预发布跳过，changesets 更贴合（见 `README.md` 的版本与发布说明） |
 
 另外两点现实原因：
 
@@ -70,7 +70,7 @@ $ pnpm gen package config --no-material
 也可以手工创建，步骤如下：
 
 1. 在 `packages/` 下创建新目录。
-2. 新增 `package.json`，参考现有包的 `scripts.build: "father build"`、`module/main/types/files` 和 `publishConfig.access: "public"` 字段。
+2. 新增 `package.json`，参考现有包的 `scripts.build`、`module/main/types/files` 和 `publishConfig.access: "public"` 字段。
 3. 新增 `.fatherrc.ts` 并 `extends "../../father.config.ts"` 继承公共配置。
 4. 在 `packages/<name>/src/index.ts` 导出公共 API。
 
