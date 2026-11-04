@@ -26,5 +26,11 @@
       "@testing-library/jest-dom"
     ]
   },
-  "include": ["packages/*/src", "docs", ".dumirc.ts", "scripts/**/*.ts"]
+  "include": [
+    "packages/*/src",
+    "docs",
+    ".dumirc.ts",
+    ".size-limit.ts",
+    "scripts/**/*.ts"
+  ]
 }
