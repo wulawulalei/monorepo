@@ -1,6 +1,19 @@
 ## Component Library Monorepo
 
-技术栈：pnpm + turborepo + changesets + dumi + antd + react
+技术栈：pnpm + Turborepo + Changesets + dumi + antd + React
+
+### 环境要求
+
+- Node.js 20（仓库通过 `.nvmrc` 固定主版本）
+- pnpm 9.12.0（由 `packageManager` 声明）
+
+建议使用 `fnm`、`nvm` 或 `mise` 切换 Node 版本：
+
+```bash
+fnm use
+corepack enable
+corepack prepare pnpm@9.12.0 --activate
+```
 
 ### Quickstart
 
@@ -27,6 +40,8 @@ pnpm build
 ```bash
 # 创建 changeset
 pnpm changeset
+# 或根据 Git 变更自动生成
+pnpm changeset:auto --bump patch
 # 运行质量门禁、升级版本、构建、发布并推送标签
 pnpm release
 ```
