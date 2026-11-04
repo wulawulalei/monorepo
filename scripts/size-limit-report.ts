@@ -3,15 +3,14 @@ import fs from 'node:fs';
 interface SizeLimitResult {
   name: string;
   size: number;
-  sizeLimit: number;
-  passed: boolean;
 }
 
-const [currentPath, basePath, reportPath] = process.argv.slice(2);
+const [currentPath, basePath, reportPath, changedPackages] =
+  process.argv.slice(2);
 
-if (!currentPath || !basePath || !reportPath) {
+if (!currentPath || !basePath || !reportPath || !changedPackages) {
   throw new Error(
-    '用法：pnpm exec tsx scripts/size-limit-report.ts <当前结果> <基线结果> <报告文件>',
+    '用法：pnpm exec tsx scripts/size-limit-report.ts <当前结果> <基线结果> <报告文件> <变更包名>',
   );
 }
 
@@ -47,45 +46,53 @@ function formatPercent(value: number, base: number): string {
   return `${sign}${percent.toFixed(2).replace(/\.?0+$/, '')}%`;
 }
 
-const current = readResults(currentPath);
-const base = readResults(basePath);
-const baseByName = new Map(base.map((result) => [result.name, result]));
-const failed = current.some((result) => !result.passed);
+const changedPackageNames = new Set(
+  changedPackages
+    .split(/\r?\n|,/)
+    .map((name) => name.trim())
+    .filter(Boolean),
+);
+const currentByName = new Map(
+  readResults(currentPath).map((result) => [result.name, result]),
+);
+const baseByName = new Map(
+  readResults(basePath).map((result) => [result.name, result]),
+);
+const measuredPackages = [...changedPackageNames].filter(
+  (name) => currentByName.has(name) || baseByName.has(name),
+);
 
-const rows = current.map((result) => {
-  const baseResult = baseByName.get(result.name);
-  const baseSize = baseResult?.size ?? 0;
-  const delta = result.size - baseSize;
-  const status = result.passed ? '通过' : '超限';
+if (measuredPackages.length === 0) {
+  console.log('变更包不在体积测量清单中，跳过包体积报告。');
+  if (process.env.GITHUB_OUTPUT) {
+    fs.appendFileSync(process.env.GITHUB_OUTPUT, 'has_report=false\n', 'utf8');
+  }
+  process.exit(0);
+}
 
-  return `| \`${result.name}\` | ${formatBytes(result.size)} | ${formatDelta(
-    delta,
-  )} (${formatPercent(result.size, baseSize)}) | ${formatBytes(
-    result.sizeLimit,
-  )} | ${status} |`;
+const rows = measuredPackages.map((name) => {
+  const baseSize = baseByName.get(name)?.size ?? 0;
+  const currentSize = currentByName.get(name)?.size ?? 0;
+  const delta = currentSize - baseSize;
+
+  return `| \`${name}\` | ${formatBytes(baseSize)} | ${formatBytes(
+    currentSize,
+  )} | ${formatDelta(delta)} (${formatPercent(currentSize, baseSize)}) |`;
 });
 
 const report = [
   '<!-- size-limit-report -->',
   '## 包体积报告',
   '',
-  '| 包 | 当前 gzip 体积 | 较目标分支 | 体积预算 | 结果 |',
-  '| --- | ---: | ---: | ---: | --- |',
+  '| 包 | 目标分支 gzip 体积 | PR gzip 体积 | 变化 |',
+  '| --- | ---: | ---: | ---: |',
   ...rows,
-  '',
-  failed
-    ? '有包超过体积预算，请检查新增依赖或公开 API，并评估是否调整 `.size-limit.ts`。'
-    : '所有包均在体积预算内。',
 ].join('\n');
 
 fs.writeFileSync(reportPath, `${report}\n`, 'utf8');
 
 if (process.env.GITHUB_OUTPUT) {
-  fs.appendFileSync(
-    process.env.GITHUB_OUTPUT,
-    `failed=${failed}\nreport_path=${reportPath}\n`,
-    'utf8',
-  );
+  fs.appendFileSync(process.env.GITHUB_OUTPUT, 'has_report=true\n', 'utf8');
 }
 
 if (process.env.GITHUB_STEP_SUMMARY) {
