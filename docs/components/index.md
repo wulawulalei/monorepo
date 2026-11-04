@@ -8,21 +8,23 @@ toc: content
 
 `@xzy18/components` 是基于 [Ant Design](https://ant.design) 二次封装的 React 组件库，每个组件一个目录，可直接按需引入。
 
-| 组件           | 说明                                            |
-| -------------- | ----------------------------------------------- |
-| `Button`       | 基于 antd `Button` 的封装，新增 `success` 状态  |
-| `AntdProvider` | 全局主题配置，统一 antd 主题与 `prefixCls` 前缀 |
+| 组件           | 说明                                               |
+| -------------- | -------------------------------------------------- |
+| `Button`       | 基于 antd `Button` 的封装，新增 `success` 状态     |
+| `AntdProvider` | 全局主题配置，统一 antd 主题与 `prefixCls` 前缀    |
+| `StatusBadge`  | 展示业务状态，提供默认中文文案与 antd `Badge` 能力 |
 
 ## 代码演示
 
 ```tsx
 import React from 'react';
-import { AntdProvider, Button } from '@xzy18/components';
+import { AntdProvider, Button, StatusBadge } from '@xzy18/components';
 
 export default () => (
   <AntdProvider>
     <Button>默认按钮</Button>
     <Button success>成功按钮</Button>
+    <StatusBadge status="processing" />
   </AntdProvider>
 );
 ```
