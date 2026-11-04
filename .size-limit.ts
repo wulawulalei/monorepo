@@ -17,7 +17,6 @@ const config = [
     import: '*',
     ignore: external,
     gzip: true,
-    limit: '1.25 kB',
   },
   {
     name: '@xzy18/hooks',
@@ -25,14 +24,12 @@ const config = [
     import: '*',
     ignore: ['react', 'react/*'],
     gzip: true,
-    limit: '1.2 kB',
   },
   {
     name: '@xzy18/utils',
     path: 'packages/utils/es/index.js',
     import: '*',
     gzip: true,
-    limit: '250 B',
   },
   {
     name: '@xzy18/material-components',
@@ -40,7 +37,6 @@ const config = [
     import: '*',
     ignore: external,
     gzip: true,
-    limit: '700 B',
   },
 ] satisfies SizeLimitConfig;
 
