@@ -56,12 +56,13 @@ const packagesDir = path.join(repoRoot, 'packages');
 const pnpm = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
 
 const expectedExports: Record<string, string[]> = {
-  '@xzy18/components': ['AntdProvider', 'Button'],
+  '@xzy18/components': ['AntdProvider', 'Button', 'StatusBadge'],
   '@xzy18/config': ['eslint', 'prettier'],
   '@xzy18/hooks': ['useBoolean', 'useDebouncedValue'],
   '@xzy18/material-components': [
     'AntdProvider',
     'Button',
+    'StatusBadge',
     'clamp',
     'cx',
     'useBoolean',
@@ -457,12 +458,16 @@ function runTypeChecks(consumerDir: string): void {
   AntdProvider,
   Button,
   type ButtonProps,
+  StatusBadge,
+  type StatusBadgeProps,
 } from "@xzy18/components";
 import { eslint, prettier } from "@xzy18/config";
 import { useBoolean, useDebouncedValue } from "@xzy18/hooks";
 import {
   AntdProvider as UnifiedProvider,
   type ButtonProps as UnifiedButtonProps,
+  StatusBadge as UnifiedStatusBadge,
+  type StatusBadgeProps as UnifiedStatusBadgeProps,
   clamp,
   cx,
   useBoolean as useUnifiedBoolean,
@@ -471,12 +476,20 @@ import { clamp as directClamp } from "@xzy18/utils";
 
 const buttonProps: ButtonProps = { success: true };
 const unifiedButtonProps: UnifiedButtonProps = { success: true };
+const statusBadgeProps: StatusBadgeProps = { status: "success" };
+const unifiedStatusBadgeProps: UnifiedStatusBadgeProps = {
+  status: "warning",
+};
 
 void AntdProvider;
 void Button;
+void StatusBadge;
 void UnifiedProvider;
+void UnifiedStatusBadge;
 void buttonProps;
 void unifiedButtonProps;
+void statusBadgeProps;
+void unifiedStatusBadgeProps;
 void clamp;
 void cx;
 void directClamp;
