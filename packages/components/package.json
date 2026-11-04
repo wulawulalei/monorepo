@@ -3,6 +3,21 @@
   "version": "0.0.3",
   "private": false,
   "description": "xzy React components built on Ant Design",
+  "keywords": [
+    "react",
+    "antd",
+    "components",
+    "xzy-materials"
+  ],
+  "homepage": "https://wulawulalei.github.io/monorepo/components/",
+  "bugs": {
+    "url": "https://github.com/wulawulalei/monorepo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wulawulalei/monorepo.git",
+    "directory": "packages/components"
+  },
   "license": "MIT",
   "sideEffects": false,
   "type": "commonjs",

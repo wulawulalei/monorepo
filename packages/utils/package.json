@@ -3,6 +3,19 @@
   "version": "0.0.3",
   "private": false,
   "description": "xzy utilities for React/Antd ecosystem",
+  "keywords": [
+    "typescript",
+    "utilities",
+    "xzy-materials"
+  ],
+  "bugs": {
+    "url": "https://github.com/wulawulalei/monorepo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wulawulalei/monorepo.git",
+    "directory": "packages/utils"
+  },
   "license": "MIT",
   "sideEffects": false,
   "type": "commonjs",

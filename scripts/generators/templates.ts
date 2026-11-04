@@ -139,6 +139,14 @@ function packageJson({
     private: false,
     description,
     license: 'MIT',
+    repository: {
+      type: 'git',
+      url: 'git+https://github.com/wulawulalei/monorepo.git',
+      directory: `packages/${packageName.split('/').pop()}`,
+    },
+    bugs: {
+      url: 'https://github.com/wulawulalei/monorepo/issues',
+    },
     sideEffects: false,
     type: 'commonjs',
     exports: {

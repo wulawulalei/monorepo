@@ -3,6 +3,20 @@
   "version": "0.0.3",
   "private": false,
   "description": "xzy React hooks",
+  "keywords": [
+    "react",
+    "hooks",
+    "xzy-materials"
+  ],
+  "homepage": "https://wulawulalei.github.io/monorepo/hooks/",
+  "bugs": {
+    "url": "https://github.com/wulawulalei/monorepo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wulawulalei/monorepo.git",
+    "directory": "packages/hooks"
+  },
   "license": "MIT",
   "sideEffects": false,
   "type": "commonjs",

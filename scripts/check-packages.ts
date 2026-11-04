@@ -8,6 +8,14 @@ interface PackageManifest {
   version: string;
   private?: boolean;
   type?: string;
+  repository?: {
+    type?: string;
+    url?: string;
+    directory?: string;
+  };
+  bugs?: {
+    url?: string;
+  };
   dependencies?: Record<string, string>;
   optionalDependencies?: Record<string, string>;
   peerDependencies?: Record<string, string>;
@@ -365,6 +373,22 @@ function verifyManifest(item: PackageItem, files: Set<string>): void {
   assert(
     packedManifest.exports?.['./package.json'] === './package.json',
     `${manifest.name} 必须导出 package.json`,
+  );
+  assert(files.has('LICENSE'), `${manifest.name} 的 package 缺少 LICENSE`);
+
+  const repository = packedManifest.repository;
+  assert(
+    repository &&
+      typeof repository === 'object' &&
+      typeof repository.url === 'string' &&
+      repository.url.includes('github.com/wulawulalei/monorepo'),
+    `${manifest.name} 的 package 缺少有效的 repository 元数据`,
+  );
+  assert(
+    packedManifest.bugs &&
+      typeof packedManifest.bugs === 'object' &&
+      typeof packedManifest.bugs.url === 'string',
+    `${manifest.name} 的 package 缺少 bugs 元数据`,
   );
 
   const invalidFiles = [...files].filter(

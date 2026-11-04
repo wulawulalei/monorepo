@@ -3,6 +3,22 @@
   "version": "1.0.1",
   "private": false,
   "description": "Unified runtime materials for the xzy-materials ecosystem",
+  "keywords": [
+    "react",
+    "antd",
+    "components",
+    "hooks",
+    "utils"
+  ],
+  "homepage": "https://wulawulalei.github.io/monorepo/",
+  "bugs": {
+    "url": "https://github.com/wulawulalei/monorepo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wulawulalei/monorepo.git",
+    "directory": "packages/material-components"
+  },
   "license": "MIT",
   "sideEffects": false,
   "type": "commonjs",
