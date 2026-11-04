@@ -127,7 +127,7 @@ import { Button } from '@xzy18/components';
 $ pnpm build
 ```
 
-根目录通过 turborepo 并发执行每个包内的 `father build`。father 依据 `father.config.ts` 输出两个产物目录：
+根目录通过 Turborepo 对构建任务进行**拓扑排序**：它根据 workspace 包之间的依赖关系生成有向无环图（DAG），先并行执行没有内部构建依赖的 `components`、`hooks`、`utils`、`config`，再执行依赖前三个运行时包的 `material-components`。排序完成后，各包执行自己的 `build` 脚本：运行时包调用 `father build`，`config` 则运行 ESLint。Father 依据 `father.config.ts` 输出两个产物目录：
 
 - `es/`：ESM 产物（对应 `module` 字段）
 - `lib/`：CJS 产物（对应 `main` 字段）
