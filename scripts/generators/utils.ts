@@ -110,7 +110,7 @@ function appendExport(
   { cwd = process.cwd() }: WorkspaceOptions = {},
 ): boolean {
   const absolute = path.resolve(cwd, relativeBarrel);
-  const line = `export { ${exportName} } from "${source}";`;
+  const line = `export { ${exportName} } from '${source}';`;
   if (!fs.existsSync(absolute)) {
     warn(`未找到入口文件 ${relativeBarrel}，请手动补充：${line}`);
     return false;
@@ -150,7 +150,7 @@ function ensureBarrelExport(
     return false;
   }
 
-  const line = `export * from "${packageName}";`;
+  const line = `export * from '${packageName}';`;
   fs.writeFileSync(absolute, `${content.replace(/\s*$/, '')}\n${line}\n`);
   ok(`登记统一导出 ${relativeBarrel} -> ${line}`);
   return true;
