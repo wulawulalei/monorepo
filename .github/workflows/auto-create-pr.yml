@@ -22,120 +22,14 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - name: Create pull request
-        uses: actions/github-script@v9
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Create or update pull request
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const base = 'master';
-            const head = context.ref.replace('refs/heads/', '');
+            const syncPullRequest = require('./.github/scripts/auto-create-pr.ts');
 
-            const { data: existing } = await github.rest.pulls.list({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              base,
-              head: `${context.repo.owner}:${head}`,
-            });
-
-            if (existing.length > 0) {
-              core.info(`分支 ${head} 已有打开的 PR：#${existing[0].number}`);
-              return;
-            }
-
-            const { data: comparison } = await github.rest.repos.compareCommits({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              base,
-              head,
-            });
-
-            if (comparison.ahead_by === 0) {
-              core.info(`分支 ${head} 相对 ${base} 没有新提交，跳过创建 PR。`);
-              return;
-            }
-
-            const commits = [...comparison.commits].reverse();
-            const title = commits[0]
-              ? commits[0].commit.message.split('\n')[0]
-              : `提交分支 ${head}`;
-            const changedFiles = comparison.files || [];
-            const packageScopes = [
-              { label: '`@xzy18/components`', path: 'packages/components/' },
-              { label: '`@xzy18/hooks`', path: 'packages/hooks/' },
-              { label: '`@xzy18/utils`', path: 'packages/utils/' },
-              {
-                label: '`@xzy18/material-components`',
-                path: 'packages/material-components/',
-              },
-              { label: '`@xzy18/config`', path: 'packages/config/' },
-            ];
-            let hasPackageChange = false;
-            const impact = packageScopes.map(({ label, path }) => {
-              const count = changedFiles.filter((file) =>
-                file.filename.startsWith(path),
-              ).length;
-              hasPackageChange ||= count > 0;
-              const detail = count > 0 ? `（${count} 个文件）` : '';
-              return `- [${count > 0 ? 'x' : ' '}] ${label}${detail}`;
-            });
-
-            impact.push(
-              `- [${hasPackageChange ? ' ' : 'x'}] 仅文档、构建或仓库配置`,
-            );
-
-            const changes = commits
-              .map((commit) => {
-                const message = commit.commit.message.split('\n')[0];
-                return `- ${message} (${commit.sha.slice(0, 7)})`;
-              })
-              .join('\n');
-
-            const body = [
-              '## 变更说明',
-              '',
-              `本 PR 由分支 \`${head}\` 的提交自动创建。`,
-              '',
-              '## 提交内容',
-              '',
-              changes || '- 暂无提交',
-              '',
-              '## 影响范围',
-              '',
-              ...impact,
-              '',
-              '## 检查清单',
-              '',
-              '- [ ] 已补充或更新测试',
-              '- [ ] 已创建对应的 changeset；无需发布时已说明原因',
-              '- [ ] 本地已运行 `pnpm verify`',
-              '- [ ] 文档与公开 API 变更保持同步',
-              '',
-              '## 补充信息',
-              '',
-              `<!-- auto-create-pr:${context.runId} -->`,
-            ].join('\n');
-
-            try {
-              const { data: pullRequest } = await github.rest.pulls.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                base,
-                head,
-                title,
-                body,
-              });
-
-              core.info(`已创建 PR：#${pullRequest.number} ${pullRequest.html_url}`);
-            } catch (error) {
-              core.error(
-                `创建 PR 失败：status=${error.status}；${error.message}`,
-              );
-              if (error.status === 403) {
-                core.setFailed(
-                  '创建 PR 被拒绝，请在仓库 Actions 设置中允许 GitHub Actions 创建 Pull Request。',
-                );
-                return;
-              }
-              throw error;
-            }
+            await syncPullRequest({ github, context, core });
