@@ -1,3 +1,15 @@
+## [0.1.0](https://github.com/wulawulalei/monorepo/compare/@xzy18/components@0.0.3...@xzy18/components@0.1.0) (2026-11-05)
+
+### Features
+
+* 支持无圆点状态标签 ([d0c4ce8](https://github.com/wulawulalei/monorepo/commit/d0c4ce826edb939492fb134c5690b95fda5c775d))
+* 新增状态徽标组件 ([78fa63a](https://github.com/wulawulalei/monorepo/commit/78fa63a87af2cd4854162cb577ee63b27f85b30a))
+* 全局格式化下 ([fdc2f7f](https://github.com/wulawulalei/monorepo/commit/fdc2f7f2df599ba32463b7ef1b128c1e28afa4ea))
+
+### Bug Fixes
+
+* **packages:** 完善 CJS/ESM 发布入口 ([6562ff6](https://github.com/wulawulalei/monorepo/commit/6562ff6c6d6fe998ecd29cf85417279c4fe20ce4))
+
 ## [0.0.3](https://github.com/wulawulalei/monorepo/compare/@xzy18/components@0.0.2...@xzy18/components@0.0.3) (2026-10-29)
 
 ### Features

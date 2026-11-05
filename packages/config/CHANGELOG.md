@@ -1,3 +1,13 @@
+## [0.0.3](https://github.com/wulawulalei/monorepo/compare/@xzy18/config@0.0.2...@xzy18/config@0.0.3) (2026-11-05)
+
+### Features
+
+* 全局格式化下 ([fdc2f7f](https://github.com/wulawulalei/monorepo/commit/fdc2f7f2df599ba32463b7ef1b128c1e28afa4ea))
+
+### Bug Fixes
+
+* **config:** 完善双模块入口和公开类型 ([2ac5757](https://github.com/wulawulalei/monorepo/commit/2ac5757083f082c8bf67661ecca08cc0d2f1663c))
+
 ## [0.0.2](https://github.com/wulawulalei/monorepo/compare/@xzy18/config@0.0.1...@xzy18/config@0.0.2) (2026-10-29)
 
 ### Features

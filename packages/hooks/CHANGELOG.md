@@ -1,3 +1,13 @@
+## [0.0.4](https://github.com/wulawulalei/monorepo/compare/@xzy18/hooks@0.0.3...@xzy18/hooks@0.0.4) (2026-11-05)
+
+### Features
+
+* 全局格式化下 ([fdc2f7f](https://github.com/wulawulalei/monorepo/commit/fdc2f7f2df599ba32463b7ef1b128c1e28afa4ea))
+
+### Bug Fixes
+
+* **packages:** 完善 CJS/ESM 发布入口 ([6562ff6](https://github.com/wulawulalei/monorepo/commit/6562ff6c6d6fe998ecd29cf85417279c4fe20ce4))
+
 ## [0.0.3](https://github.com/wulawulalei/monorepo/compare/@xzy18/hooks@0.0.2...@xzy18/hooks@0.0.3) (2026-10-30)
 
 ### Features
