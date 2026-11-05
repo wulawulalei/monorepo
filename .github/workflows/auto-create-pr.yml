@@ -38,11 +38,6 @@ jobs:
               head: `${context.repo.owner}:${head}`,
             });
 
-            if (existing.length > 0) {
-              core.info(`分支 ${head} 已有打开的 PR：#${existing[0].number}`);
-              return;
-            }
-
             const { data: comparison } = await github.rest.repos.compareCommits({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -94,7 +89,7 @@ jobs:
             const body = [
               '## 变更说明',
               '',
-              `本 PR 由分支 \`${head}\` 的提交自动创建。`,
+              `本 PR 由分支 \`${head}\` 的提交自动创建并保持更新。`,
               '',
               '## 提交内容',
               '',
@@ -115,6 +110,64 @@ jobs:
               '',
               `<!-- auto-create-pr:${context.runId} -->`,
             ].join('\n');
+
+            if (existing.length > 0) {
+              const pullRequest = existing[0];
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pullRequest.number,
+                body,
+              });
+
+              const commentMarker = '<!-- auto-create-pr-comment -->';
+              const latestCommit = commits[0];
+              const commentBody = [
+                '## 自动更新',
+                '',
+                `分支 \`${head}\` 有新提交，PR 描述已同步更新。`,
+                '',
+                `当前共 ${commits.length} 个提交，最新提交：`,
+                '',
+                latestCommit
+                  ? `- ${latestCommit.commit.message.split('\n')[0]} (${latestCommit.sha.slice(0, 7)})`
+                  : '- 暂无提交',
+                '',
+                commentMarker,
+              ].join('\n');
+              const comments = await github.paginate(
+                github.rest.issues.listComments,
+                {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pullRequest.number,
+                },
+              );
+              const previous = comments.find((comment) =>
+                comment.body.includes(commentMarker),
+              );
+
+              if (previous) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: previous.id,
+                  body: commentBody,
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pullRequest.number,
+                  body: commentBody,
+                });
+              }
+
+              core.info(
+                `已更新 PR：#${pullRequest.number} ${pullRequest.html_url}`,
+              );
+              return;
+            }
 
             try {
               const { data: pullRequest } = await github.rest.pulls.create({
