@@ -18,11 +18,6 @@ interface PullRequestRecord {
   body: string | null;
 }
 
-interface CommentRecord {
-  id: number;
-  body?: string | null;
-}
-
 interface CompareResult {
   ahead_by: number;
   commits: CommitRecord[];
@@ -45,13 +40,7 @@ interface GitHubClient {
         data: CompareResult;
       }>;
     };
-    issues: {
-      listComments(params: Record<string, unknown>): Promise<unknown>;
-      updateComment(params: Record<string, unknown>): Promise<unknown>;
-      createComment(params: Record<string, unknown>): Promise<unknown>;
-    };
   };
-  paginate<T>(method: unknown, params: Record<string, unknown>): Promise<T[]>;
 }
 
 interface ScriptContext {
@@ -77,7 +66,6 @@ interface SyncOptions {
 // 自动 PR 使用固定标记识别，避免每次运行都产生无意义的描述差异。
 const BODY_START_MARKER = '<!-- auto-create-pr:start -->';
 const BODY_END_MARKER = '<!-- auto-create-pr:end -->';
-const COMMENT_MARKER = '<!-- auto-create-pr-comment -->';
 const LEGACY_BODY_MARKER_PATTERN = /<!-- auto-create-pr:\d+ -->/;
 const DEFAULT_TITLE = 'chore: 更新分支 {head}';
 const MAX_TITLE_LENGTH = 256;
@@ -186,48 +174,6 @@ function mergeManagedBody(
   return null;
 }
 
-// 评论始终复用固定标记，避免每次推送新增一条评论。
-async function upsertComment({
-  github,
-  context,
-  pullRequest,
-  body,
-}: {
-  github: GitHubClient;
-  context: ScriptContext;
-  pullRequest: PullRequestRecord;
-  body: string;
-}): Promise<void> {
-  const comments = await github.paginate<CommentRecord>(
-    github.rest.issues.listComments,
-    {
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      issue_number: pullRequest.number,
-    },
-  );
-  const previous = comments.find((comment) =>
-    comment.body?.includes(COMMENT_MARKER),
-  );
-
-  if (previous) {
-    await github.rest.issues.updateComment({
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      comment_id: previous.id,
-      body,
-    });
-    return;
-  }
-
-  await github.rest.issues.createComment({
-    owner: context.repo.owner,
-    repo: context.repo.repo,
-    issue_number: pullRequest.number,
-    body,
-  });
-}
-
 async function syncPullRequest({
   github,
   context,
@@ -274,27 +220,6 @@ async function syncPullRequest({
     } else {
       core.info(`PR #${pullRequest.number} 不是自动生成的描述，已保留原内容。`);
     }
-
-    const latestCommit = commits[0];
-    await upsertComment({
-      github,
-      context,
-      pullRequest,
-      body: [
-        '## 自动更新',
-        '',
-        `分支 \`${head}\` 有新提交。`,
-        body === null
-          ? 'PR 描述不是自动生成的内容，已保留原描述。'
-          : 'PR 描述已同步更新。',
-        '',
-        `当前共 ${commits.length} 个提交，最新提交：`,
-        '',
-        latestCommit ? formatCommit(latestCommit) : '- 暂无提交',
-        '',
-        COMMENT_MARKER,
-      ].join('\n'),
-    });
 
     core.info(`已更新 PR：#${pullRequest.number} ${pullRequest.html_url}`);
     return;
